@@ -7,8 +7,7 @@ export class RemoveUserService implements RemoveUserService {
         private readonly userRepository: UserRepositoryInterface
     ) {}
 
-    async execute(payload?: RemoveUserPort): Promise<void>
-    {
+    async execute(payload?: RemoveUserPort): Promise<void> {
         const { user } = payload;
         await this.userRepository.remove(user);
     }

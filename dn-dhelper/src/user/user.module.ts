@@ -21,7 +21,7 @@ const repositoryProviders: Array<Provider> = [
         provide: UserDiTokens.UserRepositoryInterface,
         useFactory: (repository: Repository<User>) => new UserRepository(repository),
         inject: [UserDiTokens.MySQLUserRepositoryInterface]
-    },
+    }
 ];
 
 const serviceProviders: Array<Provider> = [
@@ -48,6 +48,7 @@ const serviceProviders: Array<Provider> = [
 ];
 
 @Module({
+    exports: [UserDiTokens.FindByUsernameService],
     controllers: [UserController],
     providers: [...repositoryProviders, ...serviceProviders]
 })
