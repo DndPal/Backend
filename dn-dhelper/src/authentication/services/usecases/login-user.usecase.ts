@@ -4,4 +4,4 @@ export type LoginUserPort = {
     username: string
 }
 
-export interface LoginUserUseCase extends UseCase<LoginUserPort, { sessionId: string }> {};
+export interface LoginUserUseCase extends UseCase<LoginUserPort, string> {};

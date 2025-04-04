@@ -6,10 +6,11 @@ export class ValidateUserService implements ValidateUserUseCase {
         private readonly findByUsernameService: FindByUsernameUseCase
     ) {}
 
-    async execute(payload?: ValidateUserPort): Promise<any> {
-        const user = await this.findByUsernameService.execute({ username: payload.username });
+    async execute(payload?: ValidateUserPort): Promise<string> {
+        const { username, password } = payload;
+        const user = await this.findByUsernameService.execute({ username: username });
 
-        if(user && user.password === payload.password) {
+        if(user && user.password === password) {
             const { username } = user;
             return username;
         }

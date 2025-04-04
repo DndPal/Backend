@@ -6,6 +6,7 @@ import { RemoveUserService } from "../services/remove-user.service";
 import { FindByUsernameService } from "../services/find-by-username.service";
 import { FindByIdService } from "../services/find-by-id.service";
 import { FindByUsernamePort } from "../services/usecases/find-by-username.usecase";
+import { FindByIdPort } from "../services/usecases/find-by-id.usecase";
 
 @Controller('user')
 export class UserController {
@@ -46,8 +47,8 @@ export class UserController {
 
     @Get(':id')
     async findById(
-        @Param('id') id: number
+        @Param('id') payload: FindByIdPort
     ) {
-        return await this.findByIdService.execute(id);
+        return await this.findByIdService.execute(payload);
     }
 }

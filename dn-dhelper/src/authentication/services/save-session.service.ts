@@ -13,6 +13,5 @@ export class SaveSessionService implements SaveSessionUseCase {
         session.user = user;
         await this.sessionRespository.save(session);
         return session;
-
     }
 }   

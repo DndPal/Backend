@@ -8,9 +8,9 @@ export class LoginUserService implements LoginUserUseCase {
         private readonly findUserByUsernameService: FindByUsernameUseCase
     ) {}
 
-    async execute(payload?: LoginUserPort): Promise<{ sessionId: string }> {
+    async execute(payload?: LoginUserPort): Promise<string> {
         const user = await this.findUserByUsernameService.execute(payload);
         const session = await this.saveSessionService.execute({ user: user });
-        return { sessionId: session.id };
+        return session.id;
     }
 }

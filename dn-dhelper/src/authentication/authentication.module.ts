@@ -16,6 +16,14 @@ import { DatabaseDiTokens } from "src/infrastructure/database/di/database-tokens
 import { SessionRepository } from "./repositories/mysql/session.repository";
 import { SessionRepositoryInterface } from "./repositories/session-repository.interface";
 import { SaveSessionService } from "./services/save-session.service";
+import { ValidateSessionUseCase } from "./services/usecases/validate-session.usecase";
+import { SessionStrategy } from "./strategies/session.strategy";
+import { ValidateSessionService } from "./services/validate-session.service";
+import { FindSessionByIdUseCase } from "./services/usecases/find-session-by-id.usecase";
+import { UpdateLogOutStateUseCase } from "./services/usecases/update-log-out-state.usecase";
+import { UpdateLogOutStateService } from "./services/update-log-out-state.service";
+import { LogOutService } from "./services/log-out.service";
+import { FindSessionByIdService } from "./services/find-session-by-id.service";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -45,6 +53,26 @@ const serviceProviders: Array<Provider> = [
         provide: AuthenticationDiTokens.LoginUserService,
         useFactory: (findByUsernameService: FindByUsernameUseCase, saveSessionService: SaveSessionUseCase) => new LoginUserService(saveSessionService, findByUsernameService),
         inject: [UserDiTokens.FindByUsernameService, AuthenticationDiTokens.SaveSessionService]
+    },
+    {
+        provide: AuthenticationDiTokens.ValidateSessionService,
+        useFactory: (findSessionByIdService: FindSessionByIdUseCase) => new ValidateSessionService(findSessionByIdService),
+        inject: [AuthenticationDiTokens.FindSessionByIdService]
+    },
+    {
+        provide: AuthenticationDiTokens.LogOutService,
+        useFactory: (updateLogOutStateService: UpdateLogOutStateUseCase) => new LogOutService(updateLogOutStateService),
+        inject: [AuthenticationDiTokens.UpdateLogOutStateService]
+    },
+    {
+        provide: AuthenticationDiTokens.UpdateLogOutStateService,
+        useFactory: (sessionRepository: SessionRepositoryInterface) => new UpdateLogOutStateService(sessionRepository),
+        inject: [AuthenticationDiTokens.SessionRepositoryInterface]
+    },
+    {
+        provide: AuthenticationDiTokens.FindSessionByIdService,
+        useFactory: (sessionRepository: SessionRepositoryInterface) => new FindSessionByIdService(sessionRepository),
+        inject: [AuthenticationDiTokens.SessionRepositoryInterface]
     }
 ]
 
@@ -53,11 +81,13 @@ const strategyProviders: Array<Provider> = [
         provide: AuthenticationDiTokens.LocalStrategy,
         useFactory: (validateUserService: ValidateUserUseCase) => new LocalStrategy(validateUserService),
         inject: [AuthenticationDiTokens.ValidateUserService]
+    },
+    {
+        provide: AuthenticationDiTokens.SessionStrategy,
+        useFactory: (validateSessionService: ValidateSessionUseCase) => new SessionStrategy(validateSessionService),
+        inject: [AuthenticationDiTokens.ValidateSessionService]
     }
 ]
-
-
-
 
 @Module({
     imports: [UsersModule, PassportModule],

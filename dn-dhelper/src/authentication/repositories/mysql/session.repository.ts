@@ -1,4 +1,3 @@
-import { User } from "src/user/entities/user.entity";
 import { SessionRepositoryInterface } from "../session-repository.interface";
 import { Repository } from "typeorm";
 import { Session } from "src/authentication/entities/session.entity";
