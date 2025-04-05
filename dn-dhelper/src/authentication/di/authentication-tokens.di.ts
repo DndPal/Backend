@@ -9,6 +9,7 @@ export class AuthenticationDiTokens {
     public static readonly ValidateSessionService: string = "ValidateSessionService";
     public static readonly UpdateLogOutStateService: string = "UpdateLogOutState";
     public static readonly LogOutService: string = "LogOutService";
+    public static readonly RegisterUserService: string = "RegisterUserService";
 
     public static readonly LocalStrategy: string = "LocalStrategy";
     public static readonly SessionStrategy: string = "SessionStrategy";

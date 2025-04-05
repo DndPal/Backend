@@ -8,7 +8,8 @@ export class FindSessionByIdService implements FindSessionByIdUseCase {
     ) {}
 
     async execute(payload: FindSessionByIdPort): Promise<Session> {
-        const { id } = payload;
-        return await this.sessionRepository.findById(id);
+        const { sessionId } = payload;
+        const session = await this.sessionRepository.findById(sessionId);
+        return session;
     }
 }

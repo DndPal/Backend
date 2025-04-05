@@ -24,6 +24,10 @@ import { UpdateLogOutStateUseCase } from "./services/usecases/update-log-out-sta
 import { UpdateLogOutStateService } from "./services/update-log-out-state.service";
 import { LogOutService } from "./services/log-out.service";
 import { FindSessionByIdService } from "./services/find-session-by-id.service";
+import { SaveUserUseCase } from "src/user/services/usecases/save-user.usecase";
+import { RegisterUserService } from "./services/register-user.service";
+import { SessionAuthorizationGuard } from "./guards/session-authorization.guard";
+import { APP_GUARD } from "@nestjs/core";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -73,6 +77,11 @@ const serviceProviders: Array<Provider> = [
         provide: AuthenticationDiTokens.FindSessionByIdService,
         useFactory: (sessionRepository: SessionRepositoryInterface) => new FindSessionByIdService(sessionRepository),
         inject: [AuthenticationDiTokens.SessionRepositoryInterface]
+    },
+    {
+        provide: AuthenticationDiTokens.RegisterUserService,
+        useFactory: (saveUserService: SaveUserUseCase, findByUsernameService: FindByUsernameUseCase) => new RegisterUserService(saveUserService, findByUsernameService),
+        inject:[UserDiTokens.SaveUserService, UserDiTokens.FindByUsernameService]
     }
 ]
 
@@ -92,7 +101,15 @@ const strategyProviders: Array<Provider> = [
 @Module({
     imports: [UsersModule, PassportModule],
     controllers: [AuthenticationController],
-    providers: [...serviceProviders, ...strategyProviders, ...repositoryProviders]
+    providers: [
+        ...serviceProviders, 
+        ...strategyProviders, 
+        ...repositoryProviders,
+        {
+            provide: APP_GUARD,
+            useClass: SessionAuthorizationGuard
+        }
+    ]
 })
 
 export class AuthenticationModule {}

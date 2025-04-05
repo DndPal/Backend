@@ -7,8 +7,7 @@ export class ValidateSessionService implements ValidateSessionUseCase {
     ) {} 
 
     async execute(payload: ValidateSessionPort): Promise<string> {
-        const { sessionId } = payload;
-        const session = await this.findSessionByIdService.execute({ id: sessionId });
+        const session = await this.findSessionByIdService.execute(payload);
 
         if(!session || session.hasLoggedOut) {
             return null; 
