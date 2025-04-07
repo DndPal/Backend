@@ -28,6 +28,7 @@ import { SaveUserUseCase } from "src/user/services/usecases/save-user.usecase";
 import { RegisterUserService } from "./services/register-user.service";
 import { SessionAuthorizationGuard } from "./guards/session-authorization.guard";
 import { APP_GUARD } from "@nestjs/core";
+import { LogOutUseCase } from "./services/usecases/log-out.usecase";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -60,8 +61,8 @@ const serviceProviders: Array<Provider> = [
     },
     {
         provide: AuthenticationDiTokens.ValidateSessionService,
-        useFactory: (findSessionByIdService: FindSessionByIdUseCase) => new ValidateSessionService(findSessionByIdService),
-        inject: [AuthenticationDiTokens.FindSessionByIdService]
+        useFactory: (findSessionByIdService: FindSessionByIdUseCase, logOutService: LogOutUseCase) => new ValidateSessionService(findSessionByIdService, logOutService),
+        inject: [AuthenticationDiTokens.FindSessionByIdService, AuthenticationDiTokens.LogOutService]
     },
     {
         provide: AuthenticationDiTokens.LogOutService,

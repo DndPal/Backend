@@ -1,5 +1,6 @@
 import { FindByUsernameUseCase } from "src/user/services/usecases/find-by-username.usecase";
 import { ValidateUserPort, ValidateUserUseCase } from "./usecases/validate-user.usecase";
+import * as bcrypt from 'bcrypt';
 
 export class ValidateUserService implements ValidateUserUseCase {
     constructor(
@@ -10,7 +11,7 @@ export class ValidateUserService implements ValidateUserUseCase {
         const { username, password } = payload;
         const user = await this.findByUsernameService.execute({ username: username });
 
-        if(user && user.password === password) {
+        if(user && await bcrypt.compare(password, user.password)) {
             const { username } = user;
             return username;
         }
