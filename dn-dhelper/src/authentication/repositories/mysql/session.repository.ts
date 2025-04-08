@@ -12,7 +12,10 @@ export class SessionRepository implements SessionRepositoryInterface {
     }
 
     async findById(id: string): Promise<Session> {
-        return await this.repository.findOne({ where: { id: id } });
+        return await this.repository.findOne({ 
+            where: { id: id },
+            relations: ['user'] 
+        });
     }
 
     async updateLogOutState(id: string, newLogOutState: boolean): Promise<void> {

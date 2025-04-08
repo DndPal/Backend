@@ -12,11 +12,11 @@ export class UserRepository implements UserRepositoryInterface {
     }
 
     async findById(id: number): Promise<User> {
-        return await this.repository.findOne({where: {id: id}});
+        return await this.repository.findOne({where: { id: id }});
     }
 
     async findByUsername(username: string): Promise<User> {
-        return await this.repository.findOne({where: {username: username}});
+        return await this.repository.findOne({where: { username: username }});
     }
 
     async remove(user: User): Promise<void> {

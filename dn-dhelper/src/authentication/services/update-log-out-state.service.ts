@@ -9,6 +9,5 @@ export class UpdateLogOutStateService implements UpdateLogOutStateUseCase {
     async execute(payload: UpdateLogOutStatePort): Promise<void> {
         const { sessionId, newState } = payload;
         await this.sessionRepository.updateLogOutState(sessionId, newState);
-
     }
 }

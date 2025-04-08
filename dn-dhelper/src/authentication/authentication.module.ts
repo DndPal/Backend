@@ -29,6 +29,7 @@ import { RegisterUserService } from "./services/register-user.service";
 import { SessionAuthorizationGuard } from "./guards/session-authorization.guard";
 import { APP_GUARD } from "@nestjs/core";
 import { LogOutUseCase } from "./services/usecases/log-out.usecase";
+import { FindUserBySessionIdService } from "./services/find-user-by-session-id.service";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -82,7 +83,12 @@ const serviceProviders: Array<Provider> = [
     {
         provide: AuthenticationDiTokens.RegisterUserService,
         useFactory: (saveUserService: SaveUserUseCase, findByUsernameService: FindByUsernameUseCase) => new RegisterUserService(saveUserService, findByUsernameService),
-        inject:[UserDiTokens.SaveUserService, UserDiTokens.FindByUsernameService]
+        inject: [UserDiTokens.SaveUserService, UserDiTokens.FindByUsernameService]
+    },
+    {
+        provide: AuthenticationDiTokens.FindUserBySessionIdService,
+        useFactory: (findSessionByIdService: FindSessionByIdUseCase) => new FindUserBySessionIdService(findSessionByIdService),
+        inject: [AuthenticationDiTokens.FindSessionByIdService]
     }
 ]
 
@@ -100,7 +106,10 @@ const strategyProviders: Array<Provider> = [
 ]
 
 @Module({
-    imports: [UsersModule, PassportModule],
+    imports: [
+        UsersModule, 
+        PassportModule
+    ],
     controllers: [AuthenticationController],
     providers: [
         ...serviceProviders, 
@@ -110,6 +119,9 @@ const strategyProviders: Array<Provider> = [
             provide: APP_GUARD,
             useClass: SessionAuthorizationGuard
         }
+    ],
+    exports: [
+        AuthenticationDiTokens.FindUserBySessionIdService
     ]
 })
 

@@ -3,6 +3,7 @@ import { DatabaseDiTokens } from "../di/database-tokens.di";
 import { DataSource } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 import { Session } from "src/authentication/entities/session.entity";
+import { Character } from "src/character/entities/character.entity";
 
 export const databaseProviders: Array<Provider>  = [
     {
@@ -17,7 +18,8 @@ export const databaseProviders: Array<Provider>  = [
                 database: process.env.MYSQL_DB_NAME,
                 entities: [
                     User,
-                    Session
+                    Session,
+                    Character
                 ],
                 synchronize: true,
                 logging: process.env.NODE_ENV === 'development',

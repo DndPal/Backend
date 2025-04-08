@@ -18,6 +18,7 @@ export class SessionAuthorizationGuard extends AuthGuard('session') {
         if (isPublic) {
             return true;
         }
+        
         return super.canActivate(context);
     }
 }

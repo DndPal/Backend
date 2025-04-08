@@ -52,4 +52,5 @@ const serviceProviders: Array<Provider> = [
     controllers: [UserController],
     providers: [...repositoryProviders, ...serviceProviders]
 })
-export class UsersModule{};
+
+export class UsersModule {}

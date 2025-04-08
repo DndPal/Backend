@@ -2,8 +2,7 @@ import { Controller, Post, UseGuards, Request, Inject, Patch, Body } from "@nest
 import { LocalAuthenticationGuard } from "../guards/local-authentication.guard";
 import { LoginUserUseCase } from "../services/usecases/login-user.usecase";
 import { AuthenticationDiTokens } from "../di/authentication-tokens.di";
-import { LogOutPort, LogOutUseCase } from "../services/usecases/log-out.usecase";
-import { SessionAuthorizationGuard } from "../guards/session-authorization.guard";
+import { LogOutUseCase } from "../services/usecases/log-out.usecase";
 import { RegisterUserPort, RegisterUserUseCase } from "../services/usecases/register-user.usecase";
 import { Public } from "../metadata/public.metadata";
 
@@ -32,7 +31,7 @@ export class AuthenticationController {
     async logOut(
         @Request() req
     ) {
-        await this.logOutService.execute({ sessionId: req.user })
+        await this.logOutService.execute({ sessionId: req.user.sessionId });
         return { message: "Logged out sucessfully" };
     }
 
