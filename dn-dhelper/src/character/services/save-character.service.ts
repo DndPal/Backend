@@ -11,9 +11,8 @@ export class SaveCharacterService implements SaveCharacterUseCase {
     ) {}
 
     async execute(payload: SaveCharacterPort) {
-        const { sessionId, int, dex, str, cha, wis, con } = payload;
+        const { sessionId, int, dex, str, cha, wis, con, hp, ac } = payload;
         const user = await this.findUserBySessionIdService.execute({ sessionId: sessionId });
-        console.log(user);
 
         let character = new Character();
         character.dex = dex;
@@ -22,6 +21,8 @@ export class SaveCharacterService implements SaveCharacterUseCase {
         character.wis = wis;
         character.con = con;
         character.int = int;
+        character.hp = hp;
+        character.ac = ac;
         character.user = user;
         await this.characterRepository.save(character);
     }

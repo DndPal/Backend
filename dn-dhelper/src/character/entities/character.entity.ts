@@ -1,3 +1,4 @@
+import { Party } from "src/party/entities/party.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -10,22 +11,31 @@ export class Character {
     @JoinColumn({ name: 'owner_user_id' })
     user: User
 
+    @Column({ name: 'hit_points'})
+    hp: number
+
+    @Column({ name: 'armor_class' })
+    ac: number
+
     @Column({ name: 'dexterity' })
-    dex: number;
+    dex: number
 
     @Column({ name: 'strenght' })
-    str: number;
+    str: number
 
     @Column({ name: 'intelligence' })
-    int: number;
+    int: number
 
     @Column({ name: 'charisma' })
-    cha: number;
+    cha: number
 
     @Column({ name: 'wisdom' })
-    wis: number;
+    wis: number
 
     @Column({ name: 'constitution' })
-    con: number;
+    con: number
+
+    @ManyToOne(() => Party, (party) => party.members)
+    party: Party
 
 }

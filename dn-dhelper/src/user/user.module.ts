@@ -48,9 +48,17 @@ const serviceProviders: Array<Provider> = [
 ];
 
 @Module({
-    exports: [UserDiTokens.FindByUsernameService, UserDiTokens.SaveUserService],
-    controllers: [UserController],
-    providers: [...repositoryProviders, ...serviceProviders]
+    exports: [
+        UserDiTokens.FindByUsernameService, 
+        UserDiTokens.SaveUserService
+    ],
+    controllers: [
+        UserController
+    ],
+    providers: [
+        ...repositoryProviders, 
+        ...serviceProviders
+    ]
 })
 
 export class UsersModule {}

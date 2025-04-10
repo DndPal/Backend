@@ -12,7 +12,7 @@ export class CharacterRepository implements CharacterRepositoryInterface {
     }
 
     async findById(id: number): Promise<Character> {
-        const character = await this.repository.findOne({ where: { id: id }});
+        const character: Character = await this.repository.findOne({ where: { id: id }});
         return character;
     }
 
@@ -20,7 +20,7 @@ export class CharacterRepository implements CharacterRepositoryInterface {
         await this.repository.remove(character);
     }
 
-    async update(id: number, statName: string, newValue: number) {
+    async update(id: number, statName: string, newValue: number): Promise<void> {
         await this.repository.update(id, { [statName]: newValue });
     }
 }

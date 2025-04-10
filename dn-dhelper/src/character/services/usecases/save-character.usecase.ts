@@ -7,7 +7,9 @@ export type SaveCharacterPort= {
     int: number,
     cha: number,
     wis: number,
-    con: number
+    con: number,
+    hp: number,
+    ac: number
 }
 
 export interface SaveCharacterUseCase extends UseCase<SaveCharacterPort, void> {}

@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 import { Session } from "src/authentication/entities/session.entity";
 import { Character } from "src/character/entities/character.entity";
+import { Party } from "src/party/entities/party.entity";
 
 export const databaseProviders: Array<Provider>  = [
     {
@@ -19,7 +20,8 @@ export const databaseProviders: Array<Provider>  = [
                 entities: [
                     User,
                     Session,
-                    Character
+                    Character,
+                    Party
                 ],
                 synchronize: true,
                 logging: process.env.NODE_ENV === 'development',

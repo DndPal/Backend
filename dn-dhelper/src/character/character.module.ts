@@ -12,6 +12,10 @@ import { AuthenticationDiTokens } from "src/authentication/di/authentication-tok
 import { RemoveCharacterService } from "./services/remove-character.service";
 import { AlterCharacterStatsService } from "./services/alter-character-stats.service";
 import { AuthenticationModule } from "src/authentication/authentication.module";
+import { FindUserBySessionIdService } from "src/authentication/services/find-user-by-session-id.service";
+import { FindCharacterByIdService } from "./services/find-character-by-id.service";
+import { FindCharacterByIdUseCase } from "./services/usecases/find-character-by-id.usecase";
+import { AlterCharacterStatsUseCase } from "./services/usecases/alter-character-stats.usecase";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -24,9 +28,14 @@ const repositoryProviders: Array<Provider> = [
         useFactory: (repository: Repository<Character>) => new CharacterRepository(repository),
         inject: [CharacterDiTokens.MySQLCharacterRepositoryInterface]
     },
-]
+];
 
 const serviceProviders: Array<Provider> = [
+    {
+        provide: CharacterDiTokens.FindCharacterByIdService,
+        useFactory: (characterRepository: CharacterRepositoryInterface) => new FindCharacterByIdService(characterRepository),
+        inject: [CharacterDiTokens.CharacterRepositoryInterface]
+    },
     {
         provide: CharacterDiTokens.SaveCharacterService,
         useFactory: (characterRepository: CharacterRepositoryInterface, findUserBySessionIdService: FindUserBySessionIdUseCase) => new SaveCharacterService(characterRepository, findUserBySessionIdService),
@@ -35,15 +44,15 @@ const serviceProviders: Array<Provider> = [
     },
     {
         provide: CharacterDiTokens.RemoveCharacterService,
-        useFactory: (characterRepository: CharacterRepository) => new RemoveCharacterService(characterRepository),
-        inject: [CharacterDiTokens.CharacterRepositoryInterface]
+        useFactory: (characterRepository: CharacterRepository, findCharacterByIdService: FindCharacterByIdUseCase) => new RemoveCharacterService(characterRepository, findCharacterByIdService),
+        inject: [CharacterDiTokens.CharacterRepositoryInterface, CharacterDiTokens.FindCharacterByIdService]
     },
     {
         provide: CharacterDiTokens.AlterCharacterStatsService,
-        useFactory: (characterRepository) => new AlterCharacterStatsService(characterRepository),
+        useFactory: (characterRepository: CharacterRepository) => new AlterCharacterStatsService(characterRepository),
         inject: [CharacterDiTokens.CharacterRepositoryInterface]
     }
-]
+];
 
 @Module({
     imports: [
