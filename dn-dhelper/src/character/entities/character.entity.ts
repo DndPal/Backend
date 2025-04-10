@@ -1,6 +1,7 @@
 import { Party } from "src/party/entities/party.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CreateCharacterPayload } from "./types/create-character.type";
 
 @Entity('characters')
 export class Character {
@@ -9,33 +10,47 @@ export class Character {
 
     @ManyToOne(() => User, (user) => user.characters)
     @JoinColumn({ name: 'owner_user_id' })
+    @Index('idx_characters_on_users')
     user: User
 
     @Column({ name: 'hit_points'})
-    hp: number
+    hitPoints: number
 
     @Column({ name: 'armor_class' })
-    ac: number
+    armorClass: number
 
     @Column({ name: 'dexterity' })
-    dex: number
+    dexterity: number
 
-    @Column({ name: 'strenght' })
-    str: number
+    @Column({ name: 'strength' })
+    strength: number
 
     @Column({ name: 'intelligence' })
-    int: number
+    intelligence: number
 
     @Column({ name: 'charisma' })
-    cha: number
+    charisma: number
 
     @Column({ name: 'wisdom' })
-    wis: number
+    wisdom: number
 
     @Column({ name: 'constitution' })
-    con: number
+    constitution: number
 
     @ManyToOne(() => Party, (party) => party.members)
+    @Index('idx_characters_on_parties')
     party: Party
+
+    constructor(payload?: CreateCharacterPayload) {
+        this.hitPoints = payload?.hitPoints;
+        this.armorClass = payload?.armorClass;
+        this.dexterity = payload?.dexterity;
+        this.intelligence = payload?.intelligence;
+        this.wisdom = payload?.wisdom;
+        this.charisma = payload?.charisma;
+        this.strength = payload?.strength;
+        this.constitution = payload?.constitution;
+        this.user = payload?.user;
+    }
 
 }

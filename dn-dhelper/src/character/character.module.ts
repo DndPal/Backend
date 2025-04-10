@@ -16,6 +16,7 @@ import { FindUserBySessionIdService } from "src/authentication/services/find-use
 import { FindCharacterByIdService } from "./services/find-character-by-id.service";
 import { FindCharacterByIdUseCase } from "./services/usecases/find-character-by-id.usecase";
 import { AlterCharacterStatsUseCase } from "./services/usecases/alter-character-stats.usecase";
+import { RemovePartyFromCharacterService } from "./services/remove-party-from-character.service";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -31,6 +32,11 @@ const repositoryProviders: Array<Provider> = [
 ];
 
 const serviceProviders: Array<Provider> = [
+    {
+        provide: CharacterDiTokens.RemovePartyFromCharacterService,
+        useFactory: (characterRepository: CharacterRepositoryInterface) => new RemovePartyFromCharacterService(characterRepository),
+        inject: [CharacterDiTokens.CharacterRepositoryInterface]
+    },
     {
         provide: CharacterDiTokens.FindCharacterByIdService,
         useFactory: (characterRepository: CharacterRepositoryInterface) => new FindCharacterByIdService(characterRepository),

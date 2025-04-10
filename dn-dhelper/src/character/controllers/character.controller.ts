@@ -14,6 +14,7 @@ export class CharacterController {
         @Inject(CharacterDiTokens.AlterCharacterStatsService)
         private readonly alterCharacterStatsService: AlterCharacterStatsUseCase
     ) {}
+    
     @Post('')
     async saveCharacter(
         @Body() payload: SaveCharacterPort,
