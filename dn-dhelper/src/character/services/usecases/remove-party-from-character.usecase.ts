@@ -1,7 +1,8 @@
+import { Character } from "src/character/entities/character.entity";
 import { UseCase } from "src/common/usecase.common";
 
 export type RemovePartyFromCharacterPort = {
-    characterId: number
+    character: Character
 }
 
-export interface RemovePartyrFromCharacterUseCase extends UseCase<RemovePartyFromCharacterPort, void> {}
+export interface RemovePartyFromCharacterUseCase extends UseCase<RemovePartyFromCharacterPort, void> {}

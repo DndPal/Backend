@@ -12,10 +12,8 @@ import { AuthenticationDiTokens } from "src/authentication/di/authentication-tok
 import { RemoveCharacterService } from "./services/remove-character.service";
 import { AlterCharacterStatsService } from "./services/alter-character-stats.service";
 import { AuthenticationModule } from "src/authentication/authentication.module";
-import { FindUserBySessionIdService } from "src/authentication/services/find-user-by-session-id.service";
 import { FindCharacterByIdService } from "./services/find-character-by-id.service";
 import { FindCharacterByIdUseCase } from "./services/usecases/find-character-by-id.usecase";
-import { AlterCharacterStatsUseCase } from "./services/usecases/alter-character-stats.usecase";
 import { RemovePartyFromCharacterService } from "./services/remove-party-from-character.service";
 
 const repositoryProviders: Array<Provider> = [
@@ -70,6 +68,10 @@ const serviceProviders: Array<Provider> = [
     providers: [
         ...repositoryProviders,
         ...serviceProviders
+    ],
+    exports: [
+        CharacterDiTokens.RemovePartyFromCharacterService,
+        CharacterDiTokens.FindCharacterByIdService
     ]
 })
 

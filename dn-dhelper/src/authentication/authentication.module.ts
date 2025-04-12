@@ -48,7 +48,7 @@ const serviceProviders: Array<Provider> = [
     {
         provide: AuthenticationDiTokens.ValidateUserService,
         useFactory: (findByUsernameService: FindByUsernameUseCase) => new ValidateUserService(findByUsernameService),
-        inject: [UserDiTokens.FindByUsernameService]
+        inject: [UserDiTokens.FindUserByUsernameService]
     },
     {
         provide: AuthenticationDiTokens.SaveSessionService,
@@ -58,7 +58,7 @@ const serviceProviders: Array<Provider> = [
     {
         provide: AuthenticationDiTokens.LoginUserService,
         useFactory: (findByUsernameService: FindByUsernameUseCase, saveSessionService: SaveSessionUseCase) => new LoginUserService(saveSessionService, findByUsernameService),
-        inject: [UserDiTokens.FindByUsernameService, AuthenticationDiTokens.SaveSessionService]
+        inject: [UserDiTokens.FindUserByUsernameService, AuthenticationDiTokens.SaveSessionService]
     },
     {
         provide: AuthenticationDiTokens.ValidateSessionService,
@@ -83,7 +83,7 @@ const serviceProviders: Array<Provider> = [
     {
         provide: AuthenticationDiTokens.RegisterUserService,
         useFactory: (saveUserService: SaveUserUseCase, findByUsernameService: FindByUsernameUseCase) => new RegisterUserService(saveUserService, findByUsernameService),
-        inject: [UserDiTokens.SaveUserService, UserDiTokens.FindByUsernameService]
+        inject: [UserDiTokens.SaveUserService, UserDiTokens.FindUserByUsernameService]
     },
     {
         provide: AuthenticationDiTokens.FindUserBySessionIdService,

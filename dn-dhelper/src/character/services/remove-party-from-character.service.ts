@@ -1,14 +1,13 @@
 import { CharacterRepositoryInterface } from "../repositories/character-repository.interface";
-import { RemovePartyFromCharacterPort, RemovePartyrFromCharacterUseCase } from "./usecases/remove-party-from-character.usecase";
+import { RemovePartyFromCharacterPort, RemovePartyFromCharacterUseCase } from "./usecases/remove-party-from-character.usecase";
 
-export class RemovePartyFromCharacterService implements RemovePartyrFromCharacterUseCase {
+export class RemovePartyFromCharacterService implements RemovePartyFromCharacterUseCase {
     constructor(
         private readonly characterRepository: CharacterRepositoryInterface
     ) {}
 
     async execute(payload: RemovePartyFromCharacterPort) {
-        const { characterId } = payload;
-        const character = await this.characterRepository.findById(characterId);
+        const { character } = payload        
         character.party = null;
         await this.characterRepository.save(character);
     }

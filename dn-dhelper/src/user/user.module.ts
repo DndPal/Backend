@@ -8,8 +8,8 @@ import { UserRepositoryInterface } from "./repositories/user-repository.interfac
 import { SaveUserService } from "./services/save-user.service";
 import { UserController } from "./controllers/user.controller";
 import { RemoveUserService } from "./services/remove-user.service";
-import { FindByUsernameService } from "./services/find-by-username.service";
-import { FindByIdService } from "./services/find-by-id.service";
+import { FindByUsernameService } from "./services/find-user-by-username.service";
+import { FindByIdService } from "./services/find-user-by-id.service";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -36,12 +36,12 @@ const serviceProviders: Array<Provider> = [
         inject: [UserDiTokens.UserRepositoryInterface]
     },
     {
-        provide: UserDiTokens.FindByUsernameService,
+        provide: UserDiTokens.FindUserByUsernameService,
         useFactory: (userRepository: UserRepositoryInterface) => new FindByUsernameService(userRepository),
         inject: [UserDiTokens.UserRepositoryInterface]
     },
     {
-        provide: UserDiTokens.FindByIdService,
+        provide: UserDiTokens.FindUserByIdService,
         useFactory: (userRepository: UserRepositoryInterface) => new FindByIdService(userRepository),
         inject: [UserDiTokens.UserRepositoryInterface]
     }
@@ -49,7 +49,7 @@ const serviceProviders: Array<Provider> = [
 
 @Module({
     exports: [
-        UserDiTokens.FindByUsernameService, 
+        UserDiTokens.FindUserByUsernameService, 
         UserDiTokens.SaveUserService
     ],
     controllers: [

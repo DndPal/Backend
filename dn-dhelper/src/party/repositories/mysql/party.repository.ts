@@ -1,6 +1,7 @@
 import { Party } from "src/party/entities/party.entity";
 import { PartyRepositoryInterface } from "../party-repository.interface";
 import { Repository } from "typeorm";
+import { User } from "src/user/entities/user.entity";
 
 export class PartyRepository implements PartyRepositoryInterface {
     constructor(
@@ -12,11 +13,18 @@ export class PartyRepository implements PartyRepositoryInterface {
     }
 
     async findById(id: number) {
-        const party: Party = await this.repository.findOne({ where: { id: id } });
-        return party;
+        return await this.repository.findOne({ where: { id: id } }); 
     }
 
     async removeParty(party: Party) {
         await this.repository.remove(party);
+    }
+
+    async findByLeader(user: User) {
+        const party: Party = await this.repository.findOne({ 
+            where: { leader: user },
+            relations: ['members'],
+        });
+        return party;
     }
 }

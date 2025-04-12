@@ -1,7 +1,7 @@
 import { Body, Controller, Inject, Get, Param } from "@nestjs/common";
 import { UserDiTokens } from "../di/user-tokens.di";
-import { FindByUsernameService } from "../services/find-by-username.service";
-import { FindByIdService } from "../services/find-by-id.service";
+import { FindByUsernameService } from "../services/find-user-by-username.service";
+import { FindByIdService } from "../services/find-user-by-id.service";
 import { FindByUsernamePort } from "../services/usecases/find-by-username.usecase";
 import { FindByIdPort } from "../services/usecases/find-by-id.usecase";
 

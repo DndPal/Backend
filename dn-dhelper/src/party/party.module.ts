@@ -7,6 +7,14 @@ import { Party } from "./entities/party.entity";
 import { DatabaseDiTokens } from "src/infrastructure/database/di/database-tokens.di";
 import { PartyRepository } from "./repositories/mysql/party.repository";
 import { SavePartyService } from "./services/save-party.service";
+import { CharacterModule } from "src/character/character.module";
+import { RemovePartyFromCharacterUseCase } from "src/character/services/usecases/remove-party-from-character.usecase";
+import { FindUserBySessionIdUseCase } from "src/authentication/services/usecases/find-user-by-session-id.usecase";
+import { PartyRepositoryInterface } from "./repositories/party-repository.interface";
+import { FindCharacterByIdUseCase } from "src/character/services/usecases/find-character-by-id.usecase";
+import { KickCharacterService } from "./services/kick-character.service";
+import { CharacterDiTokens } from "src/character/di/character-tokens.di";
+import { AuthenticationDiTokens } from "src/authentication/di/authentication-tokens.di";
 
 const repositoryProviders: Array<Provider> = [
     {
@@ -26,6 +34,12 @@ const serviceProviders: Array<Provider> = [
         provide: PartyDiTokens.SavePartyService,
         useFactory: (partyRepository: PartyRepository) => new SavePartyService(partyRepository),
         inject: [PartyDiTokens.PartyRepositoryInterface]
+    },
+    {
+        provide: PartyDiTokens.KickCharacterService,
+        useFactory: (removePartyFromCharacterService: RemovePartyFromCharacterUseCase, findUserBySessionIdService: FindUserBySessionIdUseCase, partyRepository: PartyRepositoryInterface, findCharacterByIdService: FindCharacterByIdUseCase) => new KickCharacterService(removePartyFromCharacterService, findUserBySessionIdService, partyRepository, findCharacterByIdService),
+        inject: [CharacterDiTokens.RemovePartyFromCharacterService, AuthenticationDiTokens.FindUserBySessionIdService, PartyDiTokens.PartyRepositoryInterface, CharacterDiTokens.FindCharacterByIdService]
+        
     }
 ];
 
@@ -38,7 +52,8 @@ const serviceProviders: Array<Provider> = [
         PartyController
     ],
     imports: [
-        AuthenticationModule
+        AuthenticationModule,
+        CharacterModule
     ]
 })
 
