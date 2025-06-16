@@ -1,10 +1,10 @@
-import { FindByUsernameUseCase } from "src/user/services/usecases/find-by-username.usecase";
+import { FindUserByUsernameUseCase } from "src/user/services/usecases/find-user-by-username.usecase";
 import { ValidateUserPort, ValidateUserUseCase } from "./usecases/validate-user.usecase";
 import * as bcrypt from 'bcrypt';
 
 export class ValidateUserService implements ValidateUserUseCase {
     constructor(
-        private readonly findByUsernameService: FindByUsernameUseCase
+        private readonly findByUsernameService: FindUserByUsernameUseCase
     ) {}
 
     async execute(payload?: ValidateUserPort): Promise<string> {

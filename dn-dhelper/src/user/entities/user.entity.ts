@@ -1,6 +1,8 @@
 import { Character } from "src/character/entities/character.entity";
+import { ItemPreset } from "src/items/entities/abstracts/item-preset.abstract";
+import { Invitation } from "src/party/entities/invitation.entity";
 import { Party } from "src/party/entities/party.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("users")
 export class User {
@@ -21,4 +23,14 @@ export class User {
 
     @OneToMany(() => Character, (character) => character.user)
     characters: Character[];
+
+    @OneToMany(() => Invitation, (invitation) => invitation.invitedUser)
+    invitations: Invitation[];
+
+    @OneToOne(() => Party, (party) => party.leader, { onDelete: 'SET NULL' })
+    @JoinColumn()
+    createdParty: Party
+
+    @OneToMany(() => ItemPreset, (itemPreset) => itemPreset.creator)
+    itemPresets: ItemPreset[]; 
 }

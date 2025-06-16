@@ -5,13 +5,19 @@ import { DatabaseModule } from './infrastructure/database/database.module';
 import { UsersModule } from './user/user.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { CharacterModule } from './character/character.module';
+import { PartyModule } from './party/party.module';
+import { DiceModule } from './dice/dice.module';
+import { ItemsModule } from './items/items.module';
 
 @Module({
   imports: [
     DatabaseModule,
     UsersModule,
     AuthenticationModule,
-    CharacterModule
+    CharacterModule,
+    PartyModule,
+    DiceModule,
+    ItemsModule
   ],
   controllers: [AppController],
   providers: [AppService],

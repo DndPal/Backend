@@ -12,12 +12,12 @@ export class SessionStrategy extends PassportStrategy(Strategy, 'session') {
 
     async validate(req: any): Promise<any> {
         const id = req.headers['authorization'];
-        const sessionId = await this.validateSessionService.execute({ sessionId: id });
+        const user = await this.validateSessionService.execute({ sessionId: id });
 
-        if(!sessionId) {
+        if(!user) {
             throw new UnauthorizedException('Provided session is invalid');
         }
 
-        return { sessionId: sessionId };
+        return user;
     }
 }

@@ -1,18 +1,20 @@
-import { User } from "src/user/entities/user.entity";
+import { CharacterAttributes } from "../entities/character-attributes.entity";
 import { Character } from "../entities/character.entity";
+import { CharacterAttributesRepositoryInterface } from "../repositories/character-attributes-repository.interface";
 import { CharacterRepositoryInterface } from "../repositories/character-repository.interface";
 import { SaveCharacterPort, SaveCharacterUseCase } from "./usecases/save-character.usecase";
-import { FindUserBySessionIdUseCase } from "src/authentication/services/usecases/find-user-by-session-id.usecase";
+import { FindUserByIdUseCase } from "src/user/services/usecases/find-user-by-id.usecase";
 
 export class SaveCharacterService implements SaveCharacterUseCase {
     constructor(
         private readonly characterRepository: CharacterRepositoryInterface,
-        private readonly findUserBySessionIdService: FindUserBySessionIdUseCase
+        private readonly characterAttributesRepository: CharacterAttributesRepositoryInterface,
+        private readonly findUserbyIdService: FindUserByIdUseCase
     ) {}
 
     async execute(payload: SaveCharacterPort): Promise<void> {
         const { 
-            sessionId,
+            userId,
             intelligence, 
             dexterity, 
             strength, 
@@ -23,20 +25,28 @@ export class SaveCharacterService implements SaveCharacterUseCase {
             armorClass 
         } = payload;
 
-        const user = await this.findUserBySessionIdService.execute({ sessionId: sessionId });
+        const user = await this.findUserbyIdService.execute({ id: userId });
 
         const character = new Character({
-            intelligence: intelligence,
-            strength: strength,
-            constitution: constitution,
-            charisma: charisma,
-            wisdom: wisdom,
-            dexterity: dexterity,
             hitPoints: hitPoints,
             armorClass: armorClass,
             user: user
         });
         
         await this.characterRepository.save(character);
+
+        console.log(character.id);
+
+        const characterAttributes = new CharacterAttributes({
+            character: character,
+            intelligence: intelligence,
+            strength: strength,
+            constitution: constitution,
+            charisma: charisma,
+            wisdom: wisdom,
+            dexterity: dexterity,
+        })
+        
+        await this.characterAttributesRepository.save(characterAttributes)
     }
 }

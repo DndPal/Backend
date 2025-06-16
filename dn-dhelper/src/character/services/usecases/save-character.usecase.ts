@@ -1,7 +1,7 @@
 import { UseCase } from "src/common/usecase.common";
 
 export type SaveCharacterPort= {
-    sessionId: string,
+    userId: number,
     dexterity: number,
     strength: number,
     intelligence: number,

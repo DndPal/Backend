@@ -1,6 +1,6 @@
 import { Controller, Post, UseGuards, Request, Inject, Patch, Body } from "@nestjs/common";
 import { LocalAuthenticationGuard } from "../guards/local-authentication.guard";
-import { LoginUserUseCase } from "../services/usecases/login-user.usecase";
+import { LoginUserPort, LoginUserUseCase } from "../services/usecases/login-user.usecase";
 import { AuthenticationDiTokens } from "../di/authentication-tokens.di";
 import { LogOutUseCase } from "../services/usecases/log-out.usecase";
 import { RegisterUserPort, RegisterUserUseCase } from "../services/usecases/register-user.usecase";
@@ -21,9 +21,9 @@ export class AuthenticationController {
     @UseGuards(LocalAuthenticationGuard)
     @Post('login')
     async login(
-        @Request() req
+        @Body() payload: LoginUserPort
     ) {
-        const sessionId = await this.loginUserService.execute(req.user);
+        const sessionId = await this.loginUserService.execute(payload);
         return { sessionId: sessionId };
     }
 
@@ -31,7 +31,8 @@ export class AuthenticationController {
     async logOut(
         @Request() req
     ) {
-        await this.logOutService.execute({ sessionId: req.user.sessionId });
+        const sessionId = req.headers['authorization'];
+        await this.logOutService.execute({ sessionId: sessionId });
         return { message: "Logged out sucessfully" };
     }
 

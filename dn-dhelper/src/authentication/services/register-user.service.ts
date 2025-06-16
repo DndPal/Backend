@@ -1,18 +1,18 @@
 import { SaveUserUseCase } from "src/user/services/usecases/save-user.usecase";
 import { RegisterUserPort, RegisterUserUseCase } from "./usecases/register-user.usecase";
-import { FindByUsernameUseCase } from "src/user/services/usecases/find-by-username.usecase";
+import { FindUserByUsernameUseCase } from "src/user/services/usecases/find-user-by-username.usecase";
 import { BadRequestException } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
 
 export class RegisterUserService implements RegisterUserUseCase {
     constructor(
         private readonly saveUserService: SaveUserUseCase,
-        private readonly findByUsernameService: FindByUsernameUseCase
+        private readonly findUserByUsernameService: FindUserByUsernameUseCase
     ) {}
 
     async execute(payload: RegisterUserPort): Promise<void> {
         const { username, password } = payload;
-        const existingUser = await this.findByUsernameService.execute({ username: username });
+        const existingUser = await this.findUserByUsernameService.execute({ username: username });
 
         if(existingUser) {
             throw new BadRequestException('Username already exists');

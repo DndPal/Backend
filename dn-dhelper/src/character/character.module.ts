@@ -7,26 +7,44 @@ import { DatabaseDiTokens } from "src/infrastructure/database/di/database-tokens
 import { CharacterRepository } from "./repositories/mysql/character.repository";
 import { CharacterRepositoryInterface } from "./repositories/character-repository.interface";
 import { SaveCharacterService } from "./services/save-character.service";
-import { FindUserBySessionIdUseCase } from "src/authentication/services/usecases/find-user-by-session-id.usecase";
 import { AuthenticationDiTokens } from "src/authentication/di/authentication-tokens.di";
-import { RemoveCharacterService } from "./services/remove-character.service";
 import { AlterCharacterStatsService } from "./services/alter-character-stats.service";
 import { AuthenticationModule } from "src/authentication/authentication.module";
 import { FindCharacterByIdService } from "./services/find-character-by-id.service";
-import { FindCharacterByIdUseCase } from "./services/usecases/find-character-by-id.usecase";
 import { RemovePartyFromCharacterService } from "./services/remove-party-from-character.service";
+import { AssignPartyToCharacterService } from "./services/assign-party-to-character.service";
+import { UsersModule } from "src/user/user.module";
+import { FindUserByIdUseCase } from "src/user/services/usecases/find-user-by-id.usecase";
+import { UserDiTokens } from "src/user/di/user-tokens.di";
+import { CharacterAttributes } from "./entities/character-attributes.entity";
+import { CharacterAttributesRepository } from "./repositories/mysql/character-attributes.repository";
+import { CharacterAttributesRepositoryInterface } from "./repositories/character-attributes-repository.interface";
+import { ItemsModule } from "src/items/items.module";
+import { FindItemByIdAndCharacterIdUseCase } from "src/items/services/usecases/find-item-by-id-and-character-id.usecase";
+import { EquipItemService } from "./services/equip-item.usecase";
+import { ItemDiTokens } from "src/items/di/item-tokens.di";
 
 const repositoryProviders: Array<Provider> = [
     {
         provide: CharacterDiTokens.MySQLCharacterRepositoryInterface,
         useFactory: (dataSource: DataSource) => dataSource.getRepository(Character),
-        inject:[DatabaseDiTokens.MySQLDataSource]
+        inject: [DatabaseDiTokens.MySQLDataSource]
     },
     {
         provide: CharacterDiTokens.CharacterRepositoryInterface,
         useFactory: (repository: Repository<Character>) => new CharacterRepository(repository),
         inject: [CharacterDiTokens.MySQLCharacterRepositoryInterface]
     },
+    {
+        provide: CharacterDiTokens.MySQLCharacterAttributesRepositoryInterface,
+        useFactory: (dataSource: DataSource) => dataSource.getRepository(CharacterAttributes),
+        inject: [DatabaseDiTokens.MySQLDataSource]
+    },
+    {
+        provide: CharacterDiTokens.CharacterAttributesRepositoryInterface,
+        useFactory: (repository: Repository<CharacterAttributes>) => new CharacterAttributesRepository(repository),
+        inject: [CharacterDiTokens.MySQLCharacterAttributesRepositoryInterface]
+    }
 ];
 
 const serviceProviders: Array<Provider> = [
@@ -42,25 +60,31 @@ const serviceProviders: Array<Provider> = [
     },
     {
         provide: CharacterDiTokens.SaveCharacterService,
-        useFactory: (characterRepository: CharacterRepositoryInterface, findUserBySessionIdService: FindUserBySessionIdUseCase) => new SaveCharacterService(characterRepository, findUserBySessionIdService),
-        inject: [CharacterDiTokens.CharacterRepositoryInterface, AuthenticationDiTokens.FindUserBySessionIdService]
+        useFactory: (characterRepository: CharacterRepositoryInterface, findUserByIdService: FindUserByIdUseCase, characterAttributesRepository: CharacterAttributesRepositoryInterface) => new SaveCharacterService(characterRepository, characterAttributesRepository, findUserByIdService),
+        inject: [CharacterDiTokens.CharacterRepositoryInterface, UserDiTokens.FindUserByIdService, CharacterDiTokens.CharacterAttributesRepositoryInterface]
 
     },
     {
-        provide: CharacterDiTokens.RemoveCharacterService,
-        useFactory: (characterRepository: CharacterRepository, findCharacterByIdService: FindCharacterByIdUseCase) => new RemoveCharacterService(characterRepository, findCharacterByIdService),
-        inject: [CharacterDiTokens.CharacterRepositoryInterface, CharacterDiTokens.FindCharacterByIdService]
+        provide: CharacterDiTokens.AlterCharacterStatsService,
+        useFactory: (characterAttributesRepository: CharacterAttributesRepositoryInterface) => new AlterCharacterStatsService(characterAttributesRepository),
+        inject: [CharacterDiTokens.CharacterRepositoryInterface]
     },
     {
-        provide: CharacterDiTokens.AlterCharacterStatsService,
-        useFactory: (characterRepository: CharacterRepository) => new AlterCharacterStatsService(characterRepository),
+        provide: CharacterDiTokens.AssignPartyToCharacterService,
+        useFactory: (characterRepository: CharacterRepositoryInterface) => new AssignPartyToCharacterService(characterRepository),
         inject: [CharacterDiTokens.CharacterRepositoryInterface]
+    },
+    {
+        provide: CharacterDiTokens.EquipItemService,
+        useFactory: (characterRepository: CharacterRepositoryInterface, findItemByIdAndCharacterId: FindItemByIdAndCharacterIdUseCase ) => new EquipItemService(characterRepository, findItemByIdAndCharacterId),
+        inject: [CharacterDiTokens.CharacterRepositoryInterface, ItemDiTokens.FindItemByIdAndCharacterIdService]
     }
 ];
 
 @Module({
     imports: [
-        AuthenticationModule
+        UsersModule,
+        ItemsModule
     ],
     controllers: [
         CharacterController
@@ -71,7 +95,8 @@ const serviceProviders: Array<Provider> = [
     ],
     exports: [
         CharacterDiTokens.RemovePartyFromCharacterService,
-        CharacterDiTokens.FindCharacterByIdService
+        CharacterDiTokens.FindCharacterByIdService,
+        CharacterDiTokens.AssignPartyToCharacterService
     ]
 })
 

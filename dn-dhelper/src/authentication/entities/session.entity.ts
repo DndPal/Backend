@@ -10,11 +10,10 @@ export class Session {
     @CreateDateColumn({ name: "login_date"})
     loginDate: Date
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn()
     user: User
 
     @Column({ name: "has_logged_out", default: false })
     hasLoggedOut: Boolean
-
 }

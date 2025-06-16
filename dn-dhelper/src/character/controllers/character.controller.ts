@@ -1,18 +1,18 @@
-import { Body, Controller, Delete, Inject, Param, Post, Put, Request } from "@nestjs/common";
+import { Body, Controller, Inject, Param, Post, Put, Request } from "@nestjs/common";
 import { SaveCharacterPort, SaveCharacterUseCase } from "../services/usecases/save-character.usecase";
 import { CharacterDiTokens } from "../di/character-tokens.di";
-import { RemoveCharacterUseCase } from "../services/usecases/remove-character.usecase";
 import { AlterCharacterStatsPort, AlterCharacterStatsUseCase } from "../services/usecases/alter-character-stats.usecase";
+import { EquipItemPort, EquipItemUseCase } from "../services/usecases/equip-armor.usecase";
 
 @Controller('character')
 export class CharacterController {
     constructor(
         @Inject(CharacterDiTokens.SaveCharacterService)
         private readonly saveCharacterService: SaveCharacterUseCase, 
-        @Inject(CharacterDiTokens.RemoveCharacterService)
-        private readonly removeCharacterService: RemoveCharacterUseCase,
         @Inject(CharacterDiTokens.AlterCharacterStatsService)
-        private readonly alterCharacterStatsService: AlterCharacterStatsUseCase
+        private readonly alterCharacterStatsService: AlterCharacterStatsUseCase,
+        @Inject(CharacterDiTokens.EquipItemService)
+        private readonly equipItemService: EquipItemUseCase
     ) {}
     
     @Post('')
@@ -20,17 +20,9 @@ export class CharacterController {
         @Body() payload: SaveCharacterPort,
         @Request() req
     ) {
-        payload.sessionId = req.user.sessionId;
+        payload.userId = req.user.id;
         await this.saveCharacterService.execute(payload);
         return { message: "Character created succesfully" };
-    }
-
-    @Delete(':id')
-    async deleteCharacter(
-        @Param('id') id: number
-    ) {
-        await this.removeCharacterService.execute({ id: id });
-        return { message: "Character deleted succesfully" };
     }
 
     @Put(':id')
@@ -41,5 +33,15 @@ export class CharacterController {
         payload.characterId = id;
         await this.alterCharacterStatsService.execute(payload);
         return { message: "Character stat altered succesfully" }
+    }
+
+    @Post('equip-item')
+    async equipItem(
+        @Body() payload: EquipItemPort,
+        @Request() req
+    ) {
+        payload.userId = req.user.id;
+        await this.equipItemService.execute(payload);
+        return { message: 'Item equipped succesfully' }
     }
 }

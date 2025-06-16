@@ -12,7 +12,10 @@ export class UserRepository implements UserRepositoryInterface {
     }
 
     async findById(id: number): Promise<User> {
-        return await this.repository.findOne({where: { id: id }});
+        return await this.repository.findOne({
+            where: { id: id },
+            relations: ['createdParty']
+        });
     }
 
     async findByUsername(username: string): Promise<User> {

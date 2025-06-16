@@ -12,7 +12,28 @@ export class CharacterRepository implements CharacterRepositoryInterface {
     }
 
     async findById(id: number): Promise<Character> {
-        const character: Character = await this.repository.findOne({ where: { id: id }});
+        const character: Character = await this.repository.findOne({ 
+            where: { 
+                id: id 
+            },
+            relations: [
+                'party'
+            ]
+        });
+        return character;
+    }
+
+    async findCharacterByIdAndUserId(characterId: number, userId: number): Promise<Character> {
+        const character: Character = await this.repository.findOne({ 
+            where: {
+                id: characterId,
+                user: { id: userId }
+            },
+            relations: [
+                'party',
+                'inventory'
+            ]
+        });
         return character;
     }
 

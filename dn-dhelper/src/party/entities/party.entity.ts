@@ -1,6 +1,7 @@
 import { Character } from "src/character/entities/character.entity";
 import { User } from "src/user/entities/user.entity";
-import { CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Invitation } from "./invitation.entity";
 
 @Entity('parties')
 export class Party {
@@ -10,10 +11,15 @@ export class Party {
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
-    @OneToOne(() => User)
-    @JoinColumn({ name: 'leader_id' })
+    @OneToOne(() => User, (user) => user.createdParty, { nullable: false })
     leader: User
     
     @OneToMany(() => Character, (character) => character.party)
     members: Character[]
+
+    @OneToMany(() => Invitation, (invitation) => invitation.partyInvitedTo)
+    invitations: Invitation[]
+
+    @Column({ name: 'character_slots' })
+    characterSlots: number
 }

@@ -1,14 +1,18 @@
 import { Party } from "src/party/entities/party.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CreateCharacterPayload } from "./types/create-character.type";
+import { CharacterAttributes } from "./character-attributes.entity";
+import { Item } from "src/items/entities/abstracts/item.abstract";
+import { Armor } from "src/items/entities/armor.entity";
+import { Weapon } from "src/items/entities/weapon.entity";
 
 @Entity('characters')
 export class Character {
     @PrimaryGeneratedColumn({ name: 'id' })
     id: number;
 
-    @ManyToOne(() => User, (user) => user.characters)
+    @ManyToOne(() => User, (user) => user.characters, { nullable: false })
     @JoinColumn({ name: 'owner_user_id' })
     @Index('idx_characters_on_users')
     user: User
@@ -19,38 +23,25 @@ export class Character {
     @Column({ name: 'armor_class' })
     armorClass: number
 
-    @Column({ name: 'dexterity' })
-    dexterity: number
+    @OneToMany(() => Item, (item) => item.owner)
+    inventory: Item[]
 
-    @Column({ name: 'strength' })
-    strength: number
-
-    @Column({ name: 'intelligence' })
-    intelligence: number
-
-    @Column({ name: 'charisma' })
-    charisma: number
-
-    @Column({ name: 'wisdom' })
-    wisdom: number
-
-    @Column({ name: 'constitution' })
-    constitution: number
-
-    @ManyToOne(() => Party, (party) => party.members)
+    @ManyToOne(() => Party, (party) => party.members, { onDelete: 'SET NULL' })
     @Index('idx_characters_on_parties')
+    @JoinColumn()
     party: Party
+
+    @OneToOne(() => Armor, { nullable: true })
+    @JoinColumn()
+    equipedArmor: Armor
+
+    @OneToOne(() => Weapon, { nullable: true })
+    @JoinColumn()
+    equipedWeapon: Weapon
 
     constructor(payload?: CreateCharacterPayload) {
         this.hitPoints = payload?.hitPoints;
         this.armorClass = payload?.armorClass;
-        this.dexterity = payload?.dexterity;
-        this.intelligence = payload?.intelligence;
-        this.wisdom = payload?.wisdom;
-        this.charisma = payload?.charisma;
-        this.strength = payload?.strength;
-        this.constitution = payload?.constitution;
         this.user = payload?.user;
     }
-
 }

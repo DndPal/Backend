@@ -11,7 +11,7 @@ export class SessionRepository implements SessionRepositoryInterface {
         await this.repository.save(session);
     }
 
-    async findById(id: string): Promise<Session> {
+    async findSessionById(id: string): Promise<Session> {
         return await this.repository.findOne({ 
             where: { id: id },
             relations: ['user'] 

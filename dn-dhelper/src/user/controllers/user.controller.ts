@@ -1,29 +1,29 @@
 import { Body, Controller, Inject, Get, Param } from "@nestjs/common";
 import { UserDiTokens } from "../di/user-tokens.di";
 import { FindByUsernameService } from "../services/find-user-by-username.service";
-import { FindByIdService } from "../services/find-user-by-id.service";
-import { FindByUsernamePort } from "../services/usecases/find-by-username.usecase";
-import { FindByIdPort } from "../services/usecases/find-by-id.usecase";
+import { FindUserByIdService } from "../services/find-user-by-id.service";
+import { FindUserByUsernamePort } from "../services/usecases/find-user-by-username.usecase";
+import { FindUserByIdPort } from "../services/usecases/find-user-by-id.usecase";
 
 @Controller('user')
 export class UserController {
     constructor(
-        @Inject(UserDiTokens.FindByUsernameService)
+        @Inject(UserDiTokens.FindUserByUsernameService)
         private readonly findByUsernameService: FindByUsernameService,
-        @Inject(UserDiTokens.FindByIdService)
-        private readonly findByIdService: FindByIdService
+        @Inject(UserDiTokens.FindUserByIdService)
+        private readonly findByIdService: FindUserByIdService
     ) {}
 
     @Get('')
     async findByUsername(
-        @Body() payload: FindByUsernamePort
+        @Body() payload: FindUserByUsernamePort
     ) {
         return await this.findByUsernameService.execute(payload);
     }
 
     @Get(':id')
     async findById(
-        @Param('id') payload: FindByIdPort
+        @Param('id') payload: FindUserByIdPort
     ) {
         return await this.findByIdService.execute(payload);
     }

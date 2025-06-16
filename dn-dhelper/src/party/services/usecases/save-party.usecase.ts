@@ -1,8 +1,8 @@
-import { UseCase } from "src/common/usecase.common";
-import { User } from "src/user/entities/user.entity";
+import { UseCase } from "src/common/usecase.common"
 
 export type SavePartyPort = {
-    user: User
+    characterSlots: number,
+    userId: number
 }
 
 export interface SavePartyUseCase extends UseCase<SavePartyPort, void> {}

@@ -1,21 +1,24 @@
-import { CharacterRepositoryInterface } from "../repositories/character-repository.interface";
+import { UnauthorizedException } from "@nestjs/common";
 import { AlterCharacterStatsPort, AlterCharacterStatsUseCase } from "./usecases/alter-character-stats.usecase";
-import { FindCharacterByIdUseCase } from "./usecases/find-character-by-id.usecase";
-import { SaveCharacterUseCase } from "./usecases/save-character.usecase";
+import { CharacterAttributesRepositoryInterface } from "../repositories/character-attributes-repository.interface";
 
 export class AlterCharacterStatsService implements AlterCharacterStatsUseCase {
     constructor(
-        private readonly characterRepository: CharacterRepositoryInterface
+        private readonly characterAttributesRepository: CharacterAttributesRepositoryInterface
     ) {}
 
     async execute(payload: AlterCharacterStatsPort) {
         const { characterId } = payload;
-        const character = await this.characterRepository.findById(characterId);
+        const characterAttributes = await this.characterAttributesRepository.findByCharacterId(characterId);
 
-        for (const [key, value] of Object.entries(payload)) {
-            character[key] = value;
+        if(!characterAttributes) {
+            throw new UnauthorizedException('Character does not exist');
         }
 
-        await this.characterRepository.save(character);
+        for (const [key, value] of Object.entries(payload)) {
+            characterAttributes[key] = value;
+        }
+
+        await this.characterAttributesRepository.save(characterAttributes);
     }
 }

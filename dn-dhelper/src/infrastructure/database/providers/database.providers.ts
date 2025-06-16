@@ -5,6 +5,14 @@ import { User } from "src/user/entities/user.entity";
 import { Session } from "src/authentication/entities/session.entity";
 import { Character } from "src/character/entities/character.entity";
 import { Party } from "src/party/entities/party.entity";
+import { Invitation } from "src/party/entities/invitation.entity";
+import { Item } from "src/items/entities/abstracts/item.abstract";
+import { ItemPreset } from "src/items/entities/abstracts/item-preset.abstract";
+import { Armor } from "src/items/entities/armor.entity";
+import { Weapon } from "src/items/entities/weapon.entity";
+import { CharacterAttributes } from "src/character/entities/character-attributes.entity";
+import { ArmorPreset } from "src/items/entities/armor-preset.entity";
+import { WeaponPreset } from "src/items/entities/weapon-preset.entity";
 
 export const databaseProviders: Array<Provider>  = [
     {
@@ -21,7 +29,15 @@ export const databaseProviders: Array<Provider>  = [
                     User,
                     Session,
                     Character,
-                    Party
+                    Party,
+                    Invitation,
+                    Item,
+                    ItemPreset,
+                    Weapon, 
+                    Armor,
+                    CharacterAttributes,
+                    ArmorPreset,
+                    WeaponPreset
                 ],
                 synchronize: true,
                 logging: process.env.NODE_ENV === 'development',

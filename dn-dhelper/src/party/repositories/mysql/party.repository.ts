@@ -13,18 +13,13 @@ export class PartyRepository implements PartyRepositoryInterface {
     }
 
     async findById(id: number) {
-        return await this.repository.findOne({ where: { id: id } }); 
+        return await this.repository.findOne({ 
+            where: { id: id },
+            relations: ['members']
+         }); 
     }
 
     async removeParty(party: Party) {
         await this.repository.remove(party);
-    }
-
-    async findByLeader(user: User) {
-        const party: Party = await this.repository.findOne({ 
-            where: { leader: user },
-            relations: ['members'],
-        });
-        return party;
     }
 }
