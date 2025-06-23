@@ -1,4 +1,4 @@
-import { Character } from "src/character/entities/character.entity";
+import { Character } from "src/character/entities/abstracts/character.entity";
 import { CharacterRepositoryInterface } from "../character-repository.interface";
 import { Repository } from "typeorm";
 

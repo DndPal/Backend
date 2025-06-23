@@ -2,7 +2,7 @@ import { CharacterRepositoryInterface } from "../repositories/character-reposito
 import { EquipItemPort, EquipItemUseCase } from "./usecases/equip-armor.usecase";
 import { UnauthorizedException } from "@nestjs/common";
 import { Item } from "src/items/entities/abstracts/item.abstract";
-import { Character } from "../entities/character.entity";
+import { Character } from "../entities/abstracts/character.entity";
 import { FindItemByIdAndCharacterIdUseCase } from "src/items/services/usecases/find-item-by-id-and-character-id.usecase";
 import { Armor } from "src/items/entities/armor.entity";
 import { Weapon } from "src/items/entities/weapon.entity";

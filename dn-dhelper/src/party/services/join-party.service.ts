@@ -1,5 +1,5 @@
 import { JoinPartyPort, JoinPartyUseCase } from "./usecases/join-party.usecase";
-import { BadRequestException, UnauthorizedException } from "@nestjs/common";
+import { NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { AssignPartyToCharacterUseCase } from "src/character/services/usecases/assign-party-to-character.usecase";
 import { InvitationRepositoryInterface } from "../repositories/invitation-repository.interface";
 import { Party } from "../entities/party.entity";
@@ -16,17 +16,12 @@ export class JoinPartyService implements JoinPartyUseCase {
         const { characterId, partyId, userId } = payload;
 
         const invitation = await this.invitationRepository.findByInvitedUserIdAndPartyId(partyId, userId);
-        
-        if(!invitation) {
-            throw new BadRequestException('Invitation does not exist');
-        }
+        if(!invitation) throw new NotFoundException('Invitation does not exist');
 
         await this.invitationRepository.remove(invitation);
 
-        if(await this.partyIsFull(partyId)) {
-            throw new UnauthorizedException('Party is full');
-        }
-
+        if(await this.partyIsFull(partyId)) throw new UnauthorizedException('Party is full');
+        
         await this.assignPartyToCharacterService.execute({ 
             characterId: characterId, 
             partyId: partyId,

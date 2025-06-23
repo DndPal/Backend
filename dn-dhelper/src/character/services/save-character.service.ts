@@ -1,5 +1,5 @@
 import { CharacterAttributes } from "../entities/character-attributes.entity";
-import { Character } from "../entities/character.entity";
+import { Character } from "../entities/abstracts/character.entity";
 import { CharacterAttributesRepositoryInterface } from "../repositories/character-attributes-repository.interface";
 import { CharacterRepositoryInterface } from "../repositories/character-repository.interface";
 import { SaveCharacterPort, SaveCharacterUseCase } from "./usecases/save-character.usecase";

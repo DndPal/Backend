@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { Character } from "../character.entity";
+import { Character } from "../abstracts/character.entity";
 
 export type CreateCharacterPayload = {
     character?: Character,

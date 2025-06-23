@@ -1,5 +1,5 @@
 import { UnauthorizedException } from "@nestjs/common";
-import { Character } from "../entities/character.entity";
+import { Character } from "../entities/abstracts/character.entity";
 import { CharacterRepositoryInterface } from "../repositories/character-repository.interface";
 import { FindCharacterByIdPort, FindCharacterByIdUseCase } from "./usecases/find-character-by-id.usecase";
 

@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Character } from "./character.entity";
+import { Character } from "./abstracts/character.entity";
 import { CreateCharacterPayload } from "./types/create-character.type";
 
 @Entity('character_attributes')

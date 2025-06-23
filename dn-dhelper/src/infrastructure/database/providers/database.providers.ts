@@ -3,7 +3,7 @@ import { DatabaseDiTokens } from "../di/database-tokens.di";
 import { DataSource } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 import { Session } from "src/authentication/entities/session.entity";
-import { Character } from "src/character/entities/character.entity";
+import { Character } from "src/character/entities/abstracts/character.entity";
 import { Party } from "src/party/entities/party.entity";
 import { Invitation } from "src/party/entities/invitation.entity";
 import { Item } from "src/items/entities/abstracts/item.abstract";

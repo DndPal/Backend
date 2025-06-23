@@ -1,4 +1,4 @@
-import { CharacterAttribute } from "src/character/types/character-attributes.type";
+import { CharacterAttribute } from "src/character/entities/types/character-attributes.type";
 import { UseCase } from "src/common/usecase.common";
 import { Dice } from "src/dice/types/dice.type";
 

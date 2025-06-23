@@ -1,4 +1,4 @@
-import { Character } from "src/character/entities/character.entity";
+import { Character } from "src/character/entities/abstracts/character.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Invitation } from "./invitation.entity";

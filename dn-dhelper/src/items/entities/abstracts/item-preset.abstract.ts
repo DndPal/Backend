@@ -1,4 +1,4 @@
-import { CharacterAttribute } from "src/character/types/character-attributes.type";
+import { CharacterAttribute } from "src/character/entities/types/character-attributes.type";
 import { Dice } from "src/dice/types/dice.type";
 import { ItemType } from "src/items/enums/item-type.enum";
 import { User } from "src/user/entities/user.entity";

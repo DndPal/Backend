@@ -1,4 +1,4 @@
-import { Character } from "src/character/entities/character.entity";
+import { Character } from "src/character/entities/abstracts/character.entity";
 import { ItemPreset } from "src/items/entities/abstracts/item-preset.abstract";
 import { Invitation } from "src/party/entities/invitation.entity";
 import { Party } from "src/party/entities/party.entity";
@@ -29,7 +29,7 @@ export class User {
 
     @OneToOne(() => Party, (party) => party.leader, { onDelete: 'SET NULL' })
     @JoinColumn()
-    createdParty: Party
+    createdParty: Party;
 
     @OneToMany(() => ItemPreset, (itemPreset) => itemPreset.creator)
     itemPresets: ItemPreset[]; 

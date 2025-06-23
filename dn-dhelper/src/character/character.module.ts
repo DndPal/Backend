@@ -2,7 +2,7 @@ import { Module, Provider } from "@nestjs/common";
 import { CharacterController } from "./controllers/character.controller";
 import { CharacterDiTokens } from "./di/character-tokens.di";
 import { DataSource, Repository } from "typeorm";
-import { Character } from "./entities/character.entity";
+import { Character } from "./entities/abstracts/character.entity";
 import { DatabaseDiTokens } from "src/infrastructure/database/di/database-tokens.di";
 import { CharacterRepository } from "./repositories/mysql/character.repository";
 import { CharacterRepositoryInterface } from "./repositories/character-repository.interface";
