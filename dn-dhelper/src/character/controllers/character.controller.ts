@@ -1,47 +1,120 @@
-import { Body, Controller, Inject, Param, Post, Put, Request } from "@nestjs/common";
-import { SaveCharacterPort, SaveCharacterUseCase } from "../services/usecases/save-character.usecase";
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Request } from "@nestjs/common";
+import { CreatePlayableCharacterPort, CreatePlayableCharacterUseCase } from "../services/usecases/create-playable-character.usecase";
 import { CharacterDiTokens } from "../di/character-tokens.di";
-import { AlterCharacterStatsPort, AlterCharacterStatsUseCase } from "../services/usecases/alter-character-stats.usecase";
-import { EquipItemPort, EquipItemUseCase } from "../services/usecases/equip-armor.usecase";
+import { EquipItemPort, EquipItemUseCase } from "../services/usecases/equip-item.usecase";
+import { CreatePlayableCharacterResponseDto } from "../dto/create-playable-character-response.dto";
+import { PlayableCharacter } from "../entities/playable-character.entity";
+import { EquipItemResponseDto } from "../dto/equip-item-response.dto";
+import { Character } from "../entities/abstracts/character.abstract";
+import { FindCharacterByIdPort } from "../services/usecases/find-character-by-id.usecase";
+import { FindPlayableCharacterByIdUseCase } from "../services/usecases/find-playable-character-by-id.usecase";
+import { FindPlayableCharacterByIdResponseDto } from "../dto/find-playable-character-by-id-response.dto";
+import { DeletePlayableCharacterPort, DeletePlayableCharacterUseCase } from "../services/usecases/delete-playable-character.usecase";
+import { FindPlayableCharactersByUserIdPort, FindPlayableCharactersByUserIdUseCase } from "../services/usecases/find-playable-characters-by-user-id.usecase";
+import { FindPlayableCharactersByUserIdResponseDto } from "../dto/find-playable-characters-by-user-id-response.dto";
 
-@Controller('character')
+@Controller('characters')
 export class CharacterController {
     constructor(
-        @Inject(CharacterDiTokens.SaveCharacterService)
-        private readonly saveCharacterService: SaveCharacterUseCase, 
-        @Inject(CharacterDiTokens.AlterCharacterStatsService)
-        private readonly alterCharacterStatsService: AlterCharacterStatsUseCase,
+        @Inject(CharacterDiTokens.CreatePlayableCharacterService)
+        private readonly createPlayableCharacterService: CreatePlayableCharacterUseCase, 
         @Inject(CharacterDiTokens.EquipItemService)
-        private readonly equipItemService: EquipItemUseCase
+        private readonly equipItemService: EquipItemUseCase,
+        @Inject(CharacterDiTokens.FindPlayableCharacterByIdService)
+        private readonly findPlayableCharacterByIdService: FindPlayableCharacterByIdUseCase,
+        @Inject(CharacterDiTokens.DeletePlayableCharacterService)
+        private readonly deletePlayableCharacterService: DeletePlayableCharacterUseCase,
+        @Inject(CharacterDiTokens.FindPlayableCharactersByUserIdService)
+        private readonly findPlayableCharactersByUserIdService: FindPlayableCharactersByUserIdUseCase
     ) {}
     
     @Post('')
-    async saveCharacter(
-        @Body() payload: SaveCharacterPort,
+    async createPlayableCharacter(
+        @Body() payload: CreatePlayableCharacterPort,
         @Request() req
-    ) {
+    ): Promise<CreatePlayableCharacterResponseDto> {
         payload.userId = req.user.id;
-        await this.saveCharacterService.execute(payload);
-        return { message: "Character created succesfully" };
+
+        return await this.createPlayableCharacterService.execute(payload);
     }
 
-    @Put(':id')
-    async alterCharacterStat(
-        @Body() payload: AlterCharacterStatsPort,
-        @Param('id') id: number
-    ) {
-        payload.characterId = id;
-        await this.alterCharacterStatsService.execute(payload);
-        return { message: "Character stat altered succesfully" }
-    }
-
-    @Post('equip-item')
+    @Patch(':characterId/items/equip-item')
     async equipItem(
         @Body() payload: EquipItemPort,
+        @Request() req,
+        @Param('characterId') characterId: number
+    ): Promise<EquipItemResponseDto> {
+        payload.userId = req.user.id;
+        payload.characterId = characterId;
+
+        const character: Character = await this.equipItemService.execute(payload);
+
+        return {
+            characterId: character.id,
+            characterName: character.name,
+            characterAttributes: character.characterAttributes,
+            inventory: character.inventory,
+            equippedArmor: character.equippedArmor,
+            equippedWeapon: character.equippedWeapon
+        }
+    }
+
+    @Get(':characterId')
+    async getPlayableCharacterById(
+        @Param('characterId') characterId: number,
+    ): Promise<FindPlayableCharacterByIdResponseDto> {
+        const payload: FindCharacterByIdPort = {
+            id: characterId
+        }
+
+        const playableCharacter: PlayableCharacter = await this.findPlayableCharacterByIdService.execute(payload);
+
+        return {
+            characterId: playableCharacter.id,
+            characterName: playableCharacter.name,
+            characterAttributes: playableCharacter.characterAttributes,
+            inventory: playableCharacter.inventory,
+            equippedArmor: playableCharacter.equippedArmor,
+            equippedWeapon: playableCharacter.equippedWeapon
+        }
+    }
+
+    @Delete(':characterId')
+    async deletePlayableCharacter(
+        @Param('characterId') characterId: number,
         @Request() req
     ) {
-        payload.userId = req.user.id;
-        await this.equipItemService.execute(payload);
-        return { message: 'Item equipped succesfully' }
+        const payload: DeletePlayableCharacterPort = {
+            userId: req.user.id,
+            characterId: characterId
+        }
+
+        await this.deletePlayableCharacterService.execute(payload);
+
+        return { 
+            message: 'character deleted succesfully' 
+        }
+    }
+
+    @Get()
+    async findPlayableCharactersByUserId(
+        @Request() req
+    ): Promise<FindPlayableCharactersByUserIdResponseDto> {
+        const payload: FindPlayableCharactersByUserIdPort = {
+            userId: req.user.id
+        }
+
+        const playableCharacters: PlayableCharacter[] = await this.findPlayableCharactersByUserIdService.execute(payload);
+
+        return {
+            characters: playableCharacters.map(character => ({
+                characterId: character.id,
+                characterName: character.name,
+                inventory: character.inventory,
+                equippedArmor: character.equippedArmor,
+                equippedWeapon: character.equippedWeapon,
+                characterAttributes: character.characterAttributes
+            }))
+        }
     }
 }

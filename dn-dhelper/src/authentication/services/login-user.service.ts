@@ -1,6 +1,6 @@
-import { User } from "src/user/entities/user.entity";
+import { User } from "src/users/entities/user.entity";
 import { LoginUserPort, LoginUserUseCase } from "./usecases/login-user.usecase";
-import { FindUserByUsernameUseCase } from "src/user/services/usecases/find-user-by-username.usecase";
+import { FindUserByUsernameUseCase } from "src/users/services/usecases/find-user-by-username.usecase";
 import { Session } from "../entities/session.entity";
 import { SessionRepositoryInterface } from "../repositories/session-repository.interface";
 
@@ -11,8 +11,16 @@ export class LoginUserService implements LoginUserUseCase {
     ) {}
 
     async execute(payload?: LoginUserPort): Promise<string> {
-        const user = await this.findUserByUsernameService.execute(payload);
-        const session = await this.saveSession(user);
+        const user: User = await this.findUserByUsernameService.execute(payload);
+        
+        const existingValidSession: Session = await this.sessionRepository.findValidSessionByUserId(user.id);
+
+        if(existingValidSession) {
+            return existingValidSession.id;
+        }
+
+        const session: Session = await this.saveSession(user);
+        
         return session.id;
     }
 

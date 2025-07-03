@@ -1,4 +1,4 @@
-import { UnauthorizedException } from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import { Item } from "../entities/abstracts/item.abstract";
 import { ItemRepositoryInterface } from "../repositories/item-repository.interface";
 import { FindItemByIdAndCharacterIdPort, FindItemByIdAndCharacterIdUseCase } from "./usecases/find-item-by-id-and-character-id.usecase";
@@ -12,7 +12,7 @@ export class FindItemByIdAndCharacterIdService implements FindItemByIdAndCharact
         const { itemId, characterId } = payload;
 
         const item: Item = await this.itemRepository.findByIdAndCharacterId(itemId, characterId);
-        if(!item) throw new UnauthorizedException('Item does not exist');
+        if(!item) throw new NotFoundException();
 
         return item;
     }

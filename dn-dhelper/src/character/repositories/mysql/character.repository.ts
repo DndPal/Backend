@@ -1,6 +1,9 @@
-import { Character } from "src/character/entities/abstracts/character.entity";
+import { Character } from "src/character/entities/abstracts/character.abstract";
 import { CharacterRepositoryInterface } from "../character-repository.interface";
 import { Repository } from "typeorm";
+import { CharacterType } from "src/character/types/enums/character-type.enum";
+import { PlayableCharacter } from "src/character/entities/playable-character.entity";
+import { NonPlayableCharacter } from "src/character/entities/non-playable-character.entity";
 
 export class CharacterRepository implements CharacterRepositoryInterface {
     constructor(
@@ -17,31 +20,66 @@ export class CharacterRepository implements CharacterRepositoryInterface {
                 id: id 
             },
             relations: [
-                'party'
+                'party',
+                'user',
+                'characterAttributes',
+                'inventory',
+                'equippedWeapon',
+                'equippedArmor'         
             ]
         });
+
         return character;
     }
 
-    async findCharacterByIdAndUserId(characterId: number, userId: number): Promise<Character> {
-        const character: Character = await this.repository.findOne({ 
+    async findPlayableCharacterById(id: number): Promise<PlayableCharacter> {
+        const character: Character = await this.repository.findOne({
             where: {
-                id: characterId,
-                user: { id: userId }
+                id: id,
+                character_type: CharacterType.Playable
             },
             relations: [
                 'party',
-                'inventory'
+                'user',
+                'equippedArmor',
+                'equippedWeapon',
+                'inventory',
+                'characterAttributes'
             ]
         });
-        return character;
+
+        return character as PlayableCharacter | null;
+    }
+
+    async findNonPlayableCharacterById(id: number): Promise<NonPlayableCharacter> {
+        const character: Character = await this.repository.findOne({
+            where: {
+                id: id,
+                character_type: CharacterType.NonPlayable
+            },
+            relations: [
+                'party'
+            ]
+        });
+
+        return character as NonPlayableCharacter | null;
+    }
+
+    async findPlayableCharactersByUserId(userId: number): Promise<PlayableCharacter[]> {
+        return await this.repository.find({
+            where: {
+                user: { id: userId },
+            },
+            relations: [
+                'equippedArmor',
+                'equippedWeapon',
+                'inventory',
+                'characterAttributes'
+            ]
+        }); 
     }
 
     async remove(character: Character): Promise<void> {
         await this.repository.remove(character);
-    }
-
-    async update(id: number, statName: string, newValue: number): Promise<void> {
-        await this.repository.update(id, { [statName]: newValue });
     }
 }

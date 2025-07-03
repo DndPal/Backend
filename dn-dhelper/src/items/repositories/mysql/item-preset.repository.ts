@@ -12,13 +12,18 @@ export class ItemPresetRepository implements ItemPresetRepositoryInterface {
     }
 
     async findById(id: number): Promise<ItemPreset> {
-        const itemPreset = await this.repository.findOne({
+        return await this.repository.findOne({
             where: {
                 itemPresetId: id
             }
-        })
-
-        return itemPreset;
+        });
     }
 
+    async findByCreatorId(creatorId: number): Promise<ItemPreset[]> {
+        return await this.repository.find({
+            where: {
+                creator: { id: creatorId }
+            }
+        });
+    }
 }

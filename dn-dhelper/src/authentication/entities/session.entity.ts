@@ -1,19 +1,19 @@
-import { User } from "src/user/entities/user.entity";
+import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('sessions')
 export class Session {
     @PrimaryGeneratedColumn("uuid")
     @Index()
-    id: string
+    id: string;
 
     @CreateDateColumn({ name: "login_date"})
-    loginDate: Date
+    loginDate: Date;
 
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn()
-    user: User
+    user: User;
 
     @Column({ name: "has_logged_out", default: false })
-    hasLoggedOut: Boolean
+    hasLoggedOut: Boolean;
 }

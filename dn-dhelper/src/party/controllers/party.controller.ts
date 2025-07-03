@@ -1,97 +1,268 @@
-import { Body, Controller, Delete, Inject, Post, Put, Request } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Request } from "@nestjs/common";
 import { PartyDiTokens } from "../di/party-tokens.di";
-import { KickCharacterPort, KickCharacterUseCase } from "../services/usecases/kick-character.usecase";
+import { RemoveCharacterFromPartyPort, RemoveCharacterFromPartyUseCase } from "../services/usecases/remove-character-from-party.usecase";
 import { InviteUserToPartyPort, InviteUserToPartyUseCase } from "../services/usecases/invite-character-to-party.usecase";
 import { JoinPartyPort, JoinPartyUseCase } from "../services/usecases/join-party.usecase";
 import { LeavePartyPort, LeavePartyUseCase } from "../services/usecases/leave-party.usecase";
-import { SavePartyPort, SavePartyUseCase } from "../services/usecases/save-party.usecase";
-import { DeletePartyUseCase } from "../services/usecases/delete-party.usecase";
-import { GiveItemToCharacterPort, GiveItemToCharacterUseCase } from "../services/usecases/give-item-to-character.usecase";
+import { CreatePartyPort, CreatePartyUseCase } from "../services/usecases/create-party.usecase";
+import { DeletePartyPort, DeletePartyUseCase } from "../services/usecases/delete-party.usecase";
+import { ProvideItemToCharacterPort, ProvideItemToCharacterUseCase } from "../services/usecases/provide-item-to-character.usecase";
+import { AddNonPlayableCharacterToPartyPort, AddNonPlayableCharacterToPartyUseCase } from "../services/usecases/add-non-playable-character-to-party.usecase";
+import { AttackCharacterPort, AttackCharacterUseCase } from "../services/usecases/attack-character.usecase";
+import { Party } from "../entities/party.entity";
+import { Invitation } from "../entities/invitation.entity";
+import { Item } from "src/items/entities/abstracts/item.abstract";
+import { NonPlayableCharacter } from "src/character/entities/non-playable-character.entity";
+import { InviteUserToPartyResponseDto } from "../dto/invite-user-to-party-reponse.dto";
+import { AddNonPlayableCharacterToPartyResponseDto } from "../dto/add-non-playable-character-to-party-response.dto";
+import { LeavePartyResponseDto } from "../dto/leave-party-response.dto";
+import { PlayableCharacter } from "src/character/entities/playable-character.entity";
+import { RemoveCharacterFromPartyResponseDto } from "../dto/remove-character-from-party-response.dto";
+import { ProvideItemToCharacterResponseDto } from "../dto/provide-item-to-character-response.dto";
+import { AttackCharacterResponseDto } from "../dto/attack-character-response.dto";
+import { JoinPartyResponseDto } from "../dto/join-party-response.dto";
+import { GetPartyByPartyIdPort, GetPartyByPartyIdUseCase } from "../services/usecases/get-party-by-party-id.usecase";
+import { GetPartyByPartyIdResponseDto } from "../dto/get-party-by-party-id-response.dto";
+import { InvokeAbilityCheckPort, InvokeAbilityCheckUseCase } from "../services/usecases/invoke-ability-check.usecase";
+import { AbilityCheckResponseDto } from "src/dice/dto/ability-check-response.dto";
 
-@Controller('party')
+@Controller('parties')
 export class PartyController {
     constructor(
-        @Inject(PartyDiTokens.KickCharacterService)
-        private readonly kickCharacterService: KickCharacterUseCase,
+        @Inject(PartyDiTokens.RemoveCharacterFromPartyService)
+        private readonly removeCharacterFromPartyService: RemoveCharacterFromPartyUseCase,
         @Inject(PartyDiTokens.InviteUserToPartyService)
         private readonly inviteUserToPartyService: InviteUserToPartyUseCase,
         @Inject(PartyDiTokens.JoinPartyService)
         private readonly joinPartyService: JoinPartyUseCase,
         @Inject(PartyDiTokens.LeavePartyService)
         private readonly leavePartyService: LeavePartyUseCase,
-        @Inject(PartyDiTokens.SavePartyService)
-        private readonly savePartyService: SavePartyUseCase,
+        @Inject(PartyDiTokens.CreatePartyService)
+        private readonly savePartyService: CreatePartyUseCase,
         @Inject(PartyDiTokens.DeletePartyService)
         private readonly deletePartyService: DeletePartyUseCase,
-        @Inject(PartyDiTokens.GiveItemToCharacterService)
-        private readonly giveItemToCharacterService: GiveItemToCharacterUseCase
+        @Inject(PartyDiTokens.ProvideItemToCharacterService)
+        private readonly provideItemToCharacterService: ProvideItemToCharacterUseCase,
+        @Inject(PartyDiTokens.AddNonPlayableCharacterToPartyService)
+        private readonly addNonPlayableCharacterToPartyService: AddNonPlayableCharacterToPartyUseCase,
+        @Inject(PartyDiTokens.AttackCharacterService)
+        private readonly attackCharacterService: AttackCharacterUseCase,
+        @Inject(PartyDiTokens.GetPartyByPartyIdService)
+        private readonly getPartyByPartyIdService: GetPartyByPartyIdUseCase,
+        @Inject(PartyDiTokens.InvokeAbilityCheckService)
+        private readonly invokeAbilityCheckService: InvokeAbilityCheckUseCase
     ) {}
 
-    @Put('kick')
-    async kickCharacter(
-        @Body() payload: KickCharacterPort,
+    @Patch(':partyId/characters/:characterId')
+    async removeCharacter(
+        @Param('partyId') partyId: number,
+        @Param('characterId') characterId: number,
         @Request() req
-    ) {
-        payload.userId = req.user.id;
-        await this.kickCharacterService.execute(payload);
-        return { message: 'Character kicked out of the party succesfully' };
+    ): Promise<RemoveCharacterFromPartyResponseDto> {
+        const payload: RemoveCharacterFromPartyPort = {
+            characterId: characterId,
+            partyId: partyId,
+            userId: req.user.id
+        }
+
+        const party: Party = await this.removeCharacterFromPartyService.execute(payload);
+
+        return {
+            partyId: party.id,
+            members: party.members,
+            partyLeaderId: party.leader.id,
+            characterSlots: party.characterSlots
+        }
     }
 
     @Post('')
-    async saveParty(
-        @Body() payload: SavePartyPort,
+    async createParty(
+        @Body() payload: CreatePartyPort,
         @Request() req
-    ) {
+    ): Promise<CreatePartyResponseDto> {
         payload.userId = req.user.id;
-        await this.savePartyService.execute(payload);
-        return { message: 'Party created succesfully' };
+
+        const party: Party = await this.savePartyService.execute(payload);
+
+        return {
+            partyId: party.id,
+            partyLeaderId: party.leader.id,
+            characterSlots: party.characterSlots
+        }
     }
 
-    @Post('invite')
+    @Post(':id/invitations')
     async inviteUserToParty(
+        @Param('id') id: number,
         @Body() payload: InviteUserToPartyPort,
         @Request() req
-    ) {
+    ): Promise<InviteUserToPartyResponseDto> {
+        payload.partyId = id;
         payload.userId = req.user.id;
-        await this.inviteUserToPartyService.execute(payload);
-        return { message: 'User invited to party succesfully' };
+
+        const invitation: Invitation = await this.inviteUserToPartyService.execute(payload);
+
+        return {
+            invitationId: invitation.id,
+            partyInvitedToId: invitation.partyInvitedTo.id,
+            invitedUserId: invitation.invitedUser.id
+        }
     }
 
-    @Delete('')
+    @Delete(':id')
     async deletParty(
+        @Param('id') id: number,
         @Request() req
     ) {
-        await this.deletePartyService.execute({ userId: req.user.id });
-        return { message: 'Party deleted succesfully' };
+        const payload: DeletePartyPort = {
+            partyId: id,
+            userId: req.user.id
+        };
+
+        await this.deletePartyService.execute(payload);
+
+        return { message: 'party deleted succesfully' };
     }
 
-    @Post('join')
+    @Patch(':partyId/join')
     async joinParty(
         @Request() req,
-        @Body() payload: JoinPartyPort
-    ) {
+        @Body() payload: JoinPartyPort,
+        @Param('partyId') partyId: number,
+    ): Promise<JoinPartyResponseDto> {
         payload.userId = req.user.id;
-        await this.joinPartyService.execute(payload);
-        return { message: 'Party joined succesfully' };
+        payload.partyId = partyId;
+
+        const party: Party = await this.joinPartyService.execute(payload);
+
+        return {
+            partyId: party.id,
+            partyLeaderId: party.leader.id,
+            members: party.members.map(member => ({
+                characterId: member.id,
+                characterName: member.name,
+                character_type: member.character_type,
+                inventory: member.inventory,
+                equippedArmor: member.equippedArmor,
+                equippedWeapon: member.equippedWeapon,
+                characterAttributes: member.characterAttributes
+            })),
+            characterSlots: party.characterSlots
+        }
     }
 
-    @Post('leave')
+    @Patch(':partyId/characters/:characterId/leave')
     async leaveParty(
         @Request() req,
-        @Body() payload: LeavePartyPort
-    ) {
-        payload.userId = req.user.id;
-        await this.leavePartyService.execute(payload);
-        return { message: 'User left party succesfully' }
+        @Param('partyId') partyId: number,
+        @Param('characterId') characterId: number
+    ): Promise<LeavePartyResponseDto> {
+        const payload: LeavePartyPort = {
+            userId: req.user.id,
+            partyId: partyId,
+            characterId: characterId
+        }
+
+        const character: PlayableCharacter = await this.leavePartyService.execute(payload);
+
+        return {
+            characterId: character.id,
+            characterParty: character.party
+        }
     }
 
-    @Post('give-item')
-    async giveItemToCharacter(
+    @Post(':partyId/characters/:characterId/items')
+    async provideItemToCharacter(
+        @Param('partyId') partyId: number,
+        @Param('characterId') characterId: number,
         @Request() req,
-        @Body() payload: GiveItemToCharacterPort
-    ) {
+        @Body() payload: ProvideItemToCharacterPort
+    ): Promise<ProvideItemToCharacterResponseDto> {
         payload.userId = req.user.id;
-        await this.giveItemToCharacterService.execute(payload);
-        return { message: 'Item recieved' }
+        payload.partyId = partyId;
+        payload.characterId = characterId;
+
+        const item: Item = await this.provideItemToCharacterService.execute(payload);
+
+        return {
+            itemId: item.id,
+            itemName: item.itemName,
+            modifierAttribute: item.modifierAttribute,
+            dice: item.dice,
+            ownerId: item.owner.id,
+        }
+    }
+
+    @Post(':partyId/characters')
+    async addNonPlayableCharacter(
+        @Param('partyId') partyId: number,
+        @Request() req,
+        @Body() payload: AddNonPlayableCharacterToPartyPort
+    ): Promise<AddNonPlayableCharacterToPartyResponseDto> {
+        payload.partyId = partyId;
+        payload.userId = req.user.id;
+        
+        return await this.addNonPlayableCharacterToPartyService.execute(payload);
+    }
+
+    @Patch(':partyId/combat')
+    async attackCharacter(
+        @Request() req,
+        @Param('partyId') partyId: number,
+        @Body() payload: AttackCharacterPort
+    ): Promise<AttackCharacterResponseDto> {
+        payload.userId = req.user.id;
+        payload.partyId = partyId;
+
+        return await this.attackCharacterService.execute(payload);    
+    }
+
+    @Get(':partyId')
+    async getPartyById(
+        @Request() req,
+        @Param('partyId') partyId: number,
+    ): Promise<GetPartyByPartyIdResponseDto> {
+        const payload: GetPartyByPartyIdPort = {
+            userId: req.user.id,
+            partyId: partyId
+        }
+        
+        const party: Party = await this.getPartyByPartyIdService.execute(payload);
+        
+        return {
+            partyId: party.id,
+            partyLeader: {
+                id: party.leader.id,
+                username: party.leader.username
+            },
+            members: party.members.map(member => ({
+                characterId: member.id,
+                characterName: member.name,
+                character_type: member.character_type,
+                inventory: member.inventory,
+                equippedArmor: member.equippedArmor,
+                equippedWeapon: member.equippedWeapon,
+                characterAttributes: member.characterAttributes,
+                user: {
+                    id: member.user?.id,
+                    username: member.user?.username
+                }
+            })),
+            characterSlots: party.characterSlots
+        }
+    }
+
+    @Get(':partyId/characters/:characterId/ability_check')
+    async invokeAbilityCheck(
+        @Body() payload: InvokeAbilityCheckPort,
+        @Request() req,
+        @Param('partyId') partyId: number,
+        @Param('characterId') characterId: number
+    ): Promise<AbilityCheckResponseDto> {
+        payload.userId = req.user.id;
+        payload.partyId = partyId;
+        payload.characterId = characterId;
+
+        return await this.invokeAbilityCheckService.execute(payload);
     }
 }

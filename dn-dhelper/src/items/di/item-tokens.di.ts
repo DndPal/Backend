@@ -7,6 +7,8 @@ export class ItemDiTokens {
     public static readonly FindItemPresetByIdService: string = "FindItemPresetById";
     public static readonly FindItemByIdAndCharacterIdService: string = "FindItemByIdAndCharacterId";
     public static readonly SaveArmorPresetService: string = "SaveArmorPresetService";
-    public static readonly SaveItemService: string = "SaveItemService";
+    public static readonly SaveItemFromItemPresetService: string = "SaveItemFromItemPresetService";
     public static readonly SaveWeaponPresetService: string = "SaveWeaponPresetService";
+    public static readonly FindItemPresetsByCreatorIdService: string = "FindItemPresetsByCreatorIdService";
+    public static readonly SaveItemService: string = "SaveItemService";
 }

@@ -11,7 +11,7 @@ export class SessionRepository implements SessionRepositoryInterface {
         await this.repository.save(session);
     }
 
-    async findSessionById(id: string): Promise<Session> {
+    async findById(id: string): Promise<Session> {
         return await this.repository.findOne({ 
             where: { id: id },
             relations: ['user'] 
@@ -22,4 +22,12 @@ export class SessionRepository implements SessionRepositoryInterface {
         await this.repository.update(id, { hasLoggedOut: newLogOutState });
     }
 
+    async findValidSessionByUserId(userId: number): Promise<Session> {
+        return await this.repository.findOne({
+            where: {
+                user: { id: userId },
+                hasLoggedOut: false
+            }
+        })
+    }
 }

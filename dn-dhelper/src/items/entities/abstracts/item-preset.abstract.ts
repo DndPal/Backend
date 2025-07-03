@@ -1,7 +1,7 @@
 import { CharacterAttribute } from "src/character/entities/types/character-attributes.type";
 import { Dice } from "src/dice/types/dice.type";
 import { ItemType } from "src/items/enums/item-type.enum";
-import { User } from "src/user/entities/user.entity";
+import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 
 @Entity('item_presets')
@@ -19,7 +19,7 @@ export abstract class ItemPreset {
     @Column({ name: 'additional_value_dice' })
     dice: Dice;
 
-    @ManyToOne(() => User, (user) => user.itemPresets)
+    @ManyToOne(() => User, (user) => user.itemPresets, { onDelete: 'SET NULL' })
     @JoinColumn()
     creator: User;
 

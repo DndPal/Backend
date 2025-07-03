@@ -8,14 +8,14 @@ export class DiceRollService implements DiceRollUseCase {
 
     async execute(payload: DiceRollPort): Promise<number> {
         const { dice } = payload;
+
         let result: number = 0;
-        
+
         const [rollCount, diceSidesCount] = await this.determineRollCountAndDiceSides(dice);
 
         for (let i = 0; i < rollCount; i++) {
-            result = result + Math.floor(Math.random() * (diceSidesCount - this.minValue + 1)) + this.minValue;
+            result += Math.floor(Math.random() * (diceSidesCount - this.minValue + 1)) + this.minValue;
         }
-
         return result;
     }
     

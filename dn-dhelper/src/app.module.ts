@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './infrastructure/database/database.module';
-import { UsersModule } from './user/user.module';
+import { UsersModule } from './users/user.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { CharacterModule } from './character/character.module';
 import { PartyModule } from './party/party.module';

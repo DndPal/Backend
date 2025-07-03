@@ -7,7 +7,7 @@ export class CharacterAttributesRepository implements CharacterAttributesReposit
         private readonly repository: Repository<CharacterAttributes>
     ) {}
 
-    async save(characterAttributes: CharacterAttributes) {
+    async save(characterAttributes: CharacterAttributes): Promise<void> {
         await this.repository.save(characterAttributes)
     }
 
@@ -19,5 +19,13 @@ export class CharacterAttributesRepository implements CharacterAttributesReposit
         });
 
         return characterAttributes;
+    }
+
+    async findById(attributeId: number): Promise<CharacterAttributes> {
+        return await this.repository.findOne({
+            where: {
+                attributeId: attributeId
+            }
+        })
     }
 }

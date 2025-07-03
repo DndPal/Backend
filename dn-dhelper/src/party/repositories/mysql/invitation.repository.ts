@@ -11,11 +11,11 @@ export class InvitationRepository implements InvitationRepositoryInterface {
         await this.repository.save(invitation);
     }
 
-    async findByInvitedUserIdAndPartyId(partyId: number, userId: number): Promise<Invitation> {
+    async findByInvitedUserIdAndPartyId(invitedUserId: number, partyId: number): Promise<Invitation> {
         return await this.repository.findOne({
             where: {
                 partyInvitedTo: { id: partyId },
-                invitedUser: { id: userId }
+                invitedUser: { id: invitedUserId }
             }
         });
     }

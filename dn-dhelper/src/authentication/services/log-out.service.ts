@@ -8,7 +8,9 @@ export class LogOutService implements LogOutUseCase {
 
     async execute(payload: LogOutPort): Promise<void> { 
         const { sessionId } = payload;
-        const newLogOutState = true;   
+
+        const newLogOutState: boolean = true;
+
         await this.sessionRepository.updateLogOutState(sessionId, newLogOutState)
     }
 }

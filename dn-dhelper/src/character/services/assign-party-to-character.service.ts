@@ -1,26 +1,28 @@
 import { NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { CharacterRepositoryInterface } from "../repositories/character-repository.interface";
 import { AssignPartyToCharacterPort, AssignPartyToCharacterUseCase } from "./usecases/assign-party-to-character.usecase";
-import { Party } from "src/party/entities/party.entity";
+import { Character } from "../entities/abstracts/character.abstract";
+import { FindUserByIdUseCase } from "src/users/services/usecases/find-user-by-id.usecase";
+import { User } from "src/users/entities/user.entity";
 
 export class AssignPartyToCharacterService implements AssignPartyToCharacterUseCase {
     constructor(
-        private readonly characterRepository: CharacterRepositoryInterface
+        private readonly characterRepository: CharacterRepositoryInterface,
+        private readonly findUserByIdService: FindUserByIdUseCase
     ) {}
 
-    async execute(payload: AssignPartyToCharacterPort): Promise<void> {
-        const { characterId, partyId, userId } = payload;
-        const character = await this.characterRepository.findCharacterByIdAndUserId(characterId, userId);
+    async execute(payload: AssignPartyToCharacterPort): Promise<Character> {
+        const { character, party, userId } = payload;
 
-        if(!character) {
-            throw new NotFoundException('Character does not exist');
-        }
+        const user: User = await this.findUserByIdService.execute({ id: userId });
+        if(!user) throw new NotFoundException();
  
-        if(character.party) {
-            throw new UnauthorizedException('Character has already joined a party');
-        }
+        if(character.party) throw new UnauthorizedException();
+        
+        character.party = party;
 
-        character.party = { id: partyId } as Party;
         await this.characterRepository.save(character);
+
+        return character;
     }
 }

@@ -1,25 +1,43 @@
 import { Party } from "src/party/entities/party.entity";
 import { PartyRepositoryInterface } from "../party-repository.interface";
 import { Repository } from "typeorm";
-import { User } from "src/user/entities/user.entity";
 
 export class PartyRepository implements PartyRepositoryInterface {
     constructor(
         private readonly repository: Repository<Party>
     ) {}
 
-    async save(party: Party) {
+    async save(party: Party): Promise<void> {
         await this.repository.save(party);
     }
 
-    async findById(id: number) {
+    async findById(id: number): Promise<Party> {
         return await this.repository.findOne({ 
             where: { id: id },
-            relations: ['members']
+            relations: [
+                'members',
+                'leader'
+            ]
          }); 
     }
 
-    async removeParty(party: Party) {
+    async remove(party: Party): Promise<void> {
         await this.repository.remove(party);
+    }
+ 
+    async findByIdWithCharacterRelations(id: number): Promise<Party> {
+        return await this.repository.findOne({
+            where: { id: id },
+            relations: [
+                'members',
+                'members.inventory',
+                'members.user',
+                'members.equippedWeapon',
+                'members.equippedArmor',
+                'members.characterAttributes',
+                'members.party',
+                'leader'
+            ]
+        });
     }
 }

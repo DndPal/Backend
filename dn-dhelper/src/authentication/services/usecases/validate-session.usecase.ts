@@ -1,7 +1,7 @@
 import { UseCase } from "src/common/usecase.common"
-import { User } from "src/user/entities/user.entity"
+import { User } from "src/users/entities/user.entity"
 
 export type ValidateSessionPort = {
-    sessionId: string
+    sessionId: string;
 }
 export interface ValidateSessionUseCase extends UseCase<ValidateSessionPort, User> {}

@@ -1,10 +1,10 @@
 import { Module, Provider } from "@nestjs/common";
 import { AuthenticationDiTokens } from "./di/authentication-tokens.di";
-import { FindUserByUsernameUseCase } from "src/user/services/usecases/find-user-by-username.usecase";
+import { FindUserByUsernameUseCase } from "src/users/services/usecases/find-user-by-username.usecase";
 import { LoginUserService } from "./services/login-user.service";
-import { UserDiTokens } from "src/user/di/user-tokens.di";
+import { UserDiTokens } from "src/users/di/user-tokens.di";
 import { AuthenticationController } from "./controllers/authentication.controller";
-import { UsersModule } from "src/user/user.module";
+import { UsersModule } from "src/users/user.module";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { ValidateUserService } from "./services/validate-user.service";
 import { PassportModule } from "@nestjs/passport";
@@ -18,7 +18,7 @@ import { ValidateSessionUseCase } from "./services/usecases/validate-session.use
 import { SessionStrategy } from "./strategies/session.strategy";
 import { ValidateSessionService } from "./services/validate-session.service";
 import { LogOutService } from "./services/log-out.service";
-import { SaveUserUseCase } from "src/user/services/usecases/save-user.usecase";
+import { SaveUserUseCase } from "src/users/services/usecases/save-user.usecase";
 import { RegisterUserService } from "./services/register-user.service";
 import { SessionAuthorizationGuard } from "./guards/session-authorization.guard";
 import { APP_GUARD } from "@nestjs/core";
@@ -26,54 +26,96 @@ import { LogOutUseCase } from "./services/usecases/log-out.usecase";
 const repositoryProviders: Array<Provider> = [
     {
         provide: AuthenticationDiTokens.MySQLSessionRepositoryInterface,
-        useFactory: (dataSource: DataSource) => dataSource.getRepository(Session),
-        inject: [DatabaseDiTokens.MySQLDataSource]
+        useFactory: (
+            dataSource: DataSource
+        ) => dataSource.getRepository(Session),
+        inject: [
+            DatabaseDiTokens.MySQLDataSource
+        ]
     },
     {
         provide: AuthenticationDiTokens.SessionRepositoryInterface,
-        useFactory: (repository: Repository<Session>) => new SessionRepository(repository),
-        inject: [AuthenticationDiTokens.MySQLSessionRepositoryInterface]
+        useFactory: (
+            repository: Repository<Session>
+        ) => new SessionRepository(repository),
+        inject: [
+            AuthenticationDiTokens.MySQLSessionRepositoryInterface
+        ]
     }
 ]
 
 const serviceProviders: Array<Provider> = [
     {
         provide: AuthenticationDiTokens.ValidateUserService,
-        useFactory: (findByUsernameService: FindUserByUsernameUseCase) => new ValidateUserService(findByUsernameService),
-        inject: [UserDiTokens.FindUserByUsernameService]
+        useFactory: (
+            findByUsernameService: FindUserByUsernameUseCase
+        ) => new ValidateUserService(findByUsernameService),
+        inject: [
+            UserDiTokens.FindUserByUsernameService
+        ]
     },
     {
         provide: AuthenticationDiTokens.LoginUserService,
-        useFactory: (findUserByUsernameService: FindUserByUsernameUseCase, sessionRepository: SessionRepositoryInterface) => new LoginUserService(findUserByUsernameService, sessionRepository),
-        inject: [UserDiTokens.FindUserByUsernameService, AuthenticationDiTokens.SessionRepositoryInterface]
+        useFactory: (
+            findUserByUsernameService: FindUserByUsernameUseCase, 
+            sessionRepository: SessionRepositoryInterface
+        ) => new LoginUserService(findUserByUsernameService, sessionRepository),
+        inject: [
+            UserDiTokens.FindUserByUsernameService, 
+            AuthenticationDiTokens.SessionRepositoryInterface
+        ]
     },
     {
         provide: AuthenticationDiTokens.ValidateSessionService,
-        useFactory: (sessionRepository: SessionRepositoryInterface, logOutService: LogOutUseCase) => new ValidateSessionService(sessionRepository, logOutService),
-        inject: [AuthenticationDiTokens.SessionRepositoryInterface, AuthenticationDiTokens.LogOutService]
+        useFactory: (
+            sessionRepository: SessionRepositoryInterface, 
+            logOutService: LogOutUseCase
+        ) => new ValidateSessionService(sessionRepository, logOutService),
+        inject: [
+            AuthenticationDiTokens.SessionRepositoryInterface, 
+            AuthenticationDiTokens.LogOutService
+        ]
     },
     {
         provide: AuthenticationDiTokens.LogOutService,
-        useFactory: (sessionRepository: SessionRepositoryInterface) => new LogOutService(sessionRepository),
-        inject: [AuthenticationDiTokens.SessionRepositoryInterface]
+        useFactory: (
+            sessionRepository: SessionRepositoryInterface
+        ) => new LogOutService(sessionRepository),
+        inject: [
+            AuthenticationDiTokens.SessionRepositoryInterface
+        ]
     },
     {
         provide: AuthenticationDiTokens.RegisterUserService,
-        useFactory: (saveUserService: SaveUserUseCase, findByUsernameService: FindUserByUsernameUseCase) => new RegisterUserService(saveUserService, findByUsernameService),
-        inject: [UserDiTokens.SaveUserService, UserDiTokens.FindUserByUsernameService]
+        useFactory: (
+            saveUserService: SaveUserUseCase, 
+            findByUsernameService: FindUserByUsernameUseCase
+        ) => new RegisterUserService(saveUserService, findByUsernameService),
+        inject: [
+            UserDiTokens.SaveUserService, 
+            UserDiTokens.FindUserByUsernameService
+        ]
     }
-]
+];
 
 const strategyProviders: Array<Provider> = [
     {
         provide: AuthenticationDiTokens.LocalStrategy,
-        useFactory: (validateUserService: ValidateUserUseCase) => new LocalStrategy(validateUserService),
-        inject: [AuthenticationDiTokens.ValidateUserService]
+        useFactory: (
+            validateUserService: ValidateUserUseCase
+        ) => new LocalStrategy(validateUserService),
+        inject: [
+            AuthenticationDiTokens.ValidateUserService
+        ]
     },
     {
         provide: AuthenticationDiTokens.SessionStrategy,
-        useFactory: (validateSessionService: ValidateSessionUseCase) => new SessionStrategy(validateSessionService),
-        inject: [AuthenticationDiTokens.ValidateSessionService]
+        useFactory: (
+            validateSessionService: ValidateSessionUseCase
+        ) => new SessionStrategy(validateSessionService),
+        inject: [
+            AuthenticationDiTokens.ValidateSessionService
+        ]
     }
 ]
 

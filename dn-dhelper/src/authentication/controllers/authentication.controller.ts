@@ -24,6 +24,7 @@ export class AuthenticationController {
         @Body() payload: LoginUserPort
     ) {
         const sessionId = await this.loginUserService.execute(payload);
+        
         return { sessionId: sessionId };
     }
 
@@ -32,7 +33,9 @@ export class AuthenticationController {
         @Request() req
     ) {
         const sessionId = req.headers['authorization'];
+
         await this.logOutService.execute({ sessionId: sessionId });
+
         return { message: "Logged out sucessfully" };
     }
 
@@ -42,6 +45,7 @@ export class AuthenticationController {
         @Body() payload: RegisterUserPort
     ) {
         await this.registerUserService.execute(payload)
+
         return { message: "Registered succesfully" }
     }
 }

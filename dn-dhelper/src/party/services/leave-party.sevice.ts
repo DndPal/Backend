@@ -1,28 +1,22 @@
 import { RemovePartyFromCharacterUseCase } from "src/character/services/usecases/remove-party-from-character.usecase";
 import { LeavePartyUseCase, LeavePartyPort } from "./usecases/leave-party.usecase";
-import { FindCharacterByIdUseCase } from "src/character/services/usecases/find-character-by-id.usecase";
-import { FindUserByIdUseCase } from "src/user/services/usecases/find-user-by-id.usecase";
-import { UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException } from "@nestjs/common";
+import { Character } from "src/character/entities/abstracts/character.abstract";
+import { FindPlayableCharacterByIdUseCase } from "src/character/services/usecases/find-playable-character-by-id.usecase";
+import { PlayableCharacter } from "src/character/entities/playable-character.entity";
 
 export class LeavePartyService implements LeavePartyUseCase {
     constructor(
         private readonly removePartyFromCharacterService: RemovePartyFromCharacterUseCase,
-        private readonly findCharacterByIdService: FindCharacterByIdUseCase,
-        private readonly findUserByIdService: FindUserByIdUseCase
+        private readonly findPlayableCharacterByIdService: FindPlayableCharacterByIdUseCase,
     ) {}
 
-    async execute(payload: LeavePartyPort) {
-        const { userId, characterId } = payload;
+    async execute(payload: LeavePartyPort): Promise<Character> {
+        const { userId, characterId, partyId } = payload;
         
-        const character = await this.findCharacterByIdService.execute({ id: characterId });
-        const user = await this.findUserByIdService.execute({ id: userId });
-
-        if(character.user != user) {
-            throw new UnauthorizedException('Character does not belong to this user')
-        }
-
-        await this.removePartyFromCharacterService.execute({ character: character });
+        const playableCharacter: PlayableCharacter = await this.findPlayableCharacterByIdService.execute({ id: characterId });
+        if(playableCharacter.party?.id != partyId || playableCharacter.user.id != userId) throw new ForbiddenException();
         
-
+        return await this.removePartyFromCharacterService.execute({ character: playableCharacter });
     }
 }

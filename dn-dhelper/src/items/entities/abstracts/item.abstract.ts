@@ -1,4 +1,4 @@
-import { Character } from "src/character/entities/abstracts/character.entity";
+import { Character } from "src/character/entities/abstracts/character.abstract";
 import { CharacterAttribute } from "src/character/entities/types/character-attributes.type";
 import { Dice } from "src/dice/types/dice.type";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
