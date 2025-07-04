@@ -1,8 +1,8 @@
-#Project Name
+# Project Name
 
 DndPal
 
-#Features
+# Features
 
 Amplify your Dungeons & Dragons campaign with a party manager app designed to make TTRPGs more accesible for long-distance players. DndPal features various tools to help Dungeons Masters manage and keep track of character data. This application takes inpiration from Dungeons & Dragons tabletop ruleset, lightly following rules and calculations for mechanics like combat, making it best suited for newer players looking to familiarize themselves with the game. 
 
@@ -23,10 +23,24 @@ For Dungeon Masters:
 General: 
 - Users must create an account and authorize before using the app.
 
-#Project installation
-```npm install```
-```docker-compose up -d```
+# Project installation
+```bash
+npm install
+docker-compose up -d
+```
 
 To compile and run the project:
-```npm start``` 
+```bash 
+npm start
+``` 
 
+# API documentation
+Swagger API documentation for the application will be located at:
+(https://localhost:3000/api)
+
+# Tools & Technologies
+- **Language:** TypeScript 5.8.2
+- **Framework:** NestJS 11.0.1
+- **Database:** MySQL 8.0.41
+- **ORM:** TypeORM 0.3.21
+- **Authorization:** Passport.js 0.7.0
