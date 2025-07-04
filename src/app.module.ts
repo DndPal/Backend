@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseModule } from './infrastructure/database/database.module';
 import { UsersModule } from './users/user.module';
 import { AuthenticationModule } from './authentication/authentication.module';
@@ -18,8 +16,7 @@ import { ItemsModule } from './items/items.module';
     PartyModule,
     DiceModule,
     ItemsModule
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+  ]
 })
+
 export class AppModule {}

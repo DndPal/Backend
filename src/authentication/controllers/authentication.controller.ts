@@ -5,7 +5,10 @@ import { AuthenticationDiTokens } from "../di/authentication-tokens.di";
 import { LogOutUseCase } from "../services/usecases/log-out.usecase";
 import { RegisterUserPort, RegisterUserUseCase } from "../services/usecases/register-user.usecase";
 import { Public } from "../metadata/public.metadata";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { LoginUserServiceResponseDto } from "../dto/login-user-service-response.dto";
 
+@ApiTags('Authentication')
 @Controller('authentication')
 export class AuthenticationController {
     constructor(
@@ -20,15 +23,21 @@ export class AuthenticationController {
     @Public()
     @UseGuards(LocalAuthenticationGuard)
     @Post('login')
+    @ApiOperation({ summary: 'Log in user' })
+    @ApiResponse({ status: 200, description: 'User logged in succesfully', type: LoginUserServiceResponseDto })
     async login(
         @Body() payload: LoginUserPort
-    ) {
+    ): Promise<LoginUserServiceResponseDto> {
         const sessionId = await this.loginUserService.execute(payload);
         
-        return { sessionId: sessionId };
+        return {
+            sessionId: sessionId
+        };
     }
 
     @Patch('logout')
+    @ApiOperation({ summary: 'Log out user' })
+    @ApiResponse({ status: 200, description: 'User logged out succesfully' })
     async logOut(
         @Request() req
     ) {
@@ -41,6 +50,8 @@ export class AuthenticationController {
 
     @Public()
     @Post('register')
+    @ApiOperation({ summary: 'Register user' })
+    @ApiResponse({ status: 200, description: 'User registered succesfully' })
     async registerUser(
         @Body() payload: RegisterUserPort
     ) {

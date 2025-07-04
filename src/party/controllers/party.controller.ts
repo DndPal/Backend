@@ -12,7 +12,6 @@ import { AttackCharacterPort, AttackCharacterUseCase } from "../services/usecase
 import { Party } from "../entities/party.entity";
 import { Invitation } from "../entities/invitation.entity";
 import { Item } from "src/items/entities/abstracts/item.abstract";
-import { NonPlayableCharacter } from "src/character/entities/non-playable-character.entity";
 import { InviteUserToPartyResponseDto } from "../dto/invite-user-to-party-reponse.dto";
 import { AddNonPlayableCharacterToPartyResponseDto } from "../dto/add-non-playable-character-to-party-response.dto";
 import { LeavePartyResponseDto } from "../dto/leave-party-response.dto";
@@ -25,7 +24,10 @@ import { GetPartyByPartyIdPort, GetPartyByPartyIdUseCase } from "../services/use
 import { GetPartyByPartyIdResponseDto } from "../dto/get-party-by-party-id-response.dto";
 import { InvokeAbilityCheckPort, InvokeAbilityCheckUseCase } from "../services/usecases/invoke-ability-check.usecase";
 import { AbilityCheckResponseDto } from "src/dice/dto/ability-check-response.dto";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { CreatePartyResponseDto } from "../dto/create-party-response.dto";
 
+@ApiTags('Parties')
 @Controller('parties')
 export class PartyController {
     constructor(
@@ -54,6 +56,8 @@ export class PartyController {
     ) {}
 
     @Patch(':partyId/characters/:characterId')
+    @ApiOperation({ summary: 'Remove character from party' })
+    @ApiResponse({ status: 200, description: 'Character removed from party succesfully', type: RemoveCharacterFromPartyResponseDto })
     async removeCharacter(
         @Param('partyId') partyId: number,
         @Param('characterId') characterId: number,
@@ -76,6 +80,8 @@ export class PartyController {
     }
 
     @Post('')
+    @ApiOperation({ summary: 'Create a party' })
+    @ApiResponse({ status: 200, description: 'Party created succesfully', type: CreatePartyResponseDto })
     async createParty(
         @Body() payload: CreatePartyPort,
         @Request() req
@@ -92,6 +98,8 @@ export class PartyController {
     }
 
     @Post(':id/invitations')
+    @ApiOperation({ summary: 'Invite user to party' })
+    @ApiResponse({ status: 200, description: 'Invitation sent succesfully', type: InviteUserToPartyResponseDto })
     async inviteUserToParty(
         @Param('id') id: number,
         @Body() payload: InviteUserToPartyPort,
@@ -110,6 +118,8 @@ export class PartyController {
     }
 
     @Delete(':id')
+    @ApiOperation({ summary: 'Delete party' })
+    @ApiResponse({ status: 200, description: 'Party deleted succesfully' })
     async deletParty(
         @Param('id') id: number,
         @Request() req
@@ -125,6 +135,8 @@ export class PartyController {
     }
 
     @Patch(':partyId/join')
+    @ApiOperation({ summary: 'Join a party' })
+    @ApiResponse({ status: 200, description: 'Party joined succesfully', type: JoinPartyResponseDto })
     async joinParty(
         @Request() req,
         @Body() payload: JoinPartyPort,
@@ -152,6 +164,8 @@ export class PartyController {
     }
 
     @Patch(':partyId/characters/:characterId/leave')
+    @ApiOperation({ summary: 'Leave a party' })
+    @ApiResponse({ status: 200, description: 'Party left succesfully', type: LeavePartyResponseDto })
     async leaveParty(
         @Request() req,
         @Param('partyId') partyId: number,
@@ -172,6 +186,8 @@ export class PartyController {
     }
 
     @Post(':partyId/characters/:characterId/items')
+    @ApiOperation({ summary: 'Provide item to character from your party' })
+    @ApiResponse({ status: 200, description: 'Item provided succesfully', type: ProvideItemToCharacterResponseDto })
     async provideItemToCharacter(
         @Param('partyId') partyId: number,
         @Param('characterId') characterId: number,
@@ -194,6 +210,8 @@ export class PartyController {
     }
 
     @Post(':partyId/characters')
+    @ApiOperation({ summary: 'Add a NPC to party' })
+    @ApiResponse({ status: 200, description: 'NPC added succesfully', type: AddNonPlayableCharacterToPartyResponseDto })
     async addNonPlayableCharacter(
         @Param('partyId') partyId: number,
         @Request() req,
@@ -206,6 +224,8 @@ export class PartyController {
     }
 
     @Patch(':partyId/combat')
+    @ApiOperation({ summary: 'Attack a character from party with your character' })
+    @ApiResponse({ status: 200, description: 'Character attacked succesfully', type: AttackCharacterResponseDto })
     async attackCharacter(
         @Request() req,
         @Param('partyId') partyId: number,
@@ -218,6 +238,8 @@ export class PartyController {
     }
 
     @Get(':partyId')
+    @ApiOperation({ summary: 'Get party by id' })
+    @ApiResponse({ status: 200, description: 'Party returned succesfully', type: GetPartyByPartyIdResponseDto })
     async getPartyById(
         @Request() req,
         @Param('partyId') partyId: number,
@@ -253,6 +275,8 @@ export class PartyController {
     }
 
     @Get(':partyId/characters/:characterId/ability_check')
+    @ApiOperation({ summary: 'Request an ability check from any of the characters from your party' })
+    @ApiResponse({ status: 200, description: 'Ability check inititated succesfully', type: AbilityCheckResponseDto })
     async invokeAbilityCheck(
         @Body() payload: InvokeAbilityCheckPort,
         @Request() req,

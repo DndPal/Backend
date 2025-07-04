@@ -12,7 +12,9 @@ import { FindPlayableCharacterByIdResponseDto } from "../dto/find-playable-chara
 import { DeletePlayableCharacterPort, DeletePlayableCharacterUseCase } from "../services/usecases/delete-playable-character.usecase";
 import { FindPlayableCharactersByUserIdPort, FindPlayableCharactersByUserIdUseCase } from "../services/usecases/find-playable-characters-by-user-id.usecase";
 import { FindPlayableCharactersByUserIdResponseDto } from "../dto/find-playable-characters-by-user-id-response.dto";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Characters')
 @Controller('characters')
 export class CharacterController {
     constructor(
@@ -29,6 +31,8 @@ export class CharacterController {
     ) {}
     
     @Post('')
+    @ApiOperation({ summary: 'Create a playable character' })
+    @ApiResponse({ status: 200, description: 'Playable character created succesfully', type: CreatePlayableCharacterResponseDto })
     async createPlayableCharacter(
         @Body() payload: CreatePlayableCharacterPort,
         @Request() req
@@ -39,6 +43,8 @@ export class CharacterController {
     }
 
     @Patch(':characterId/items/equip-item')
+    @ApiOperation({ summary: 'Equip item on character from character inventory' })
+    @ApiResponse({ status: 200, description: 'Item equipped succesfully', type: EquipItemResponseDto })
     async equipItem(
         @Body() payload: EquipItemPort,
         @Request() req,
@@ -60,6 +66,8 @@ export class CharacterController {
     }
 
     @Get(':characterId')
+    @ApiOperation({ summary: 'Get playable character by id' })
+    @ApiResponse({ status: 200, description: 'Playable character returned succesfully', type: FindPlayableCharacterByIdResponseDto })
     async getPlayableCharacterById(
         @Param('characterId') characterId: number,
     ): Promise<FindPlayableCharacterByIdResponseDto> {
@@ -80,6 +88,8 @@ export class CharacterController {
     }
 
     @Delete(':characterId')
+    @ApiOperation({ summary: 'Delete playable character' })
+    @ApiResponse({ status: 200, description: 'Playable character deleted succesfully' })
     async deletePlayableCharacter(
         @Param('characterId') characterId: number,
         @Request() req
@@ -97,6 +107,8 @@ export class CharacterController {
     }
 
     @Get()
+    @ApiOperation({ summary: 'Get all playable characters of user ' })
+    @ApiResponse({ status: 200, description: 'Playable characters returned succesfully', type: FindPlayableCharactersByUserIdResponseDto })
     async findPlayableCharactersByUserId(
         @Request() req
     ): Promise<FindPlayableCharactersByUserIdResponseDto> {

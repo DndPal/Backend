@@ -1,32 +1,61 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { CharacterAttributes } from "src/character/entities/character-attributes.entity";
 import { Item } from "src/items/entities/abstracts/item.abstract";
 import { Armor } from "src/items/entities/armor.entity";
 import { Weapon } from "src/items/entities/weapon.entity";
 
-export class GetPartyByPartyIdResponseDto {
-    partyId: number;
-    partyLeader: PartyLeaderDto;
-    members: PartyMemberDto[];
-    characterSlots: number;
+class PartyLeaderDto {
+    @ApiProperty({ type: 'number' })
+    id: number;
+
+    @ApiProperty({ type: 'string' })
+    username: string;
 }
 
 class PartyMemberUserDto {
+    @ApiProperty({ type: 'number' })
     id: number;
+
+    @ApiProperty({ type: 'string' })
     username: string;
 }
 
 class PartyMemberDto {
+    @ApiProperty({ type: 'number' })
     characterId: number;
+
+    @ApiProperty({ type: 'string' })
     characterName: string;
+
+    @ApiProperty({ type: 'string' })
     character_type: string;
+
+    @ApiProperty({ type: () => Item, isArray: true })
     inventory: Item[]; 
+
+    @ApiProperty({ type: () => Weapon })
     equippedWeapon: Weapon;
+
+    @ApiProperty({ type: () => Armor })
     equippedArmor: Armor;
+
+    @ApiProperty({ type: () => CharacterAttributes })
     characterAttributes: CharacterAttributes;
+
+    @ApiProperty({ type: () => PartyMemberUserDto })
     user: PartyMemberUserDto;
 }
 
-class PartyLeaderDto {
-    id: number;
-    username: string;
+export class GetPartyByPartyIdResponseDto {
+    @ApiProperty({ type: 'number' })
+    partyId: number;
+
+    @ApiProperty({ type: () => PartyLeaderDto })
+    partyLeader: PartyLeaderDto;
+
+    @ApiProperty({ type: () => PartyMemberDto, isArray: true })
+    members: PartyMemberDto[];
+
+    @ApiProperty({ type: 'number' })
+    characterSlots: number;
 }
