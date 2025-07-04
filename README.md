@@ -39,6 +39,8 @@ npm start
 Swagger API documentation for the application will be located at:
 http://localhost:3000/api
 
+(/image.png)
+
 # Tools & Technologies
 - **Language:** TypeScript 5.8.2
 - **Framework:** NestJS 11.0.1
