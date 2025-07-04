@@ -37,7 +37,7 @@ npm start
 
 # API Documentation
 Swagger API documentation for the application will be located at:
-(https://localhost:3000/api)
+https://localhost:3000/api
 
 # Tools & Technologies
 - **Language:** TypeScript 5.8.2
