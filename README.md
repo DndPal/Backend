@@ -39,7 +39,7 @@ npm start
 Swagger API documentation for the application will be located at:
 http://localhost:3000/api
 
-![](image.png)
+![](image.PNG)
 
 # Tools & Technologies
 - **Language:** TypeScript 5.8.2
