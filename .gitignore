@@ -135,6 +135,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-/docker/
-dn-dhelper/.vscode/settings.json
+docker/
+.vscode/settings.json
 .idea/dataSources.xml
+
+.idea/
