@@ -23,18 +23,19 @@ For Dungeon Masters:
 General: 
 - Users must create an account and authorize before using the app.
 
-# Project installation
+# Project Installation
+To initialize the project:
 ```bash
 npm install
 docker-compose up -d
 ```
 
-To compile and run the project:
+To compile and run the application:
 ```bash 
 npm start
 ``` 
 
-# API documentation
+# API Documentation
 Swagger API documentation for the application will be located at:
 (https://localhost:3000/api)
 
